@@ -1,0 +1,362 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 51 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 51 100% 50%;
+  --radius: 0.5rem;
+  --neon-primary: 51 100% 50%;
+  --neon-secondary: 51 100% 50%;
+  --neon-accent: 51 100% 50%;
+  --gold: #FFD700;
+  --gold-dark: #E6C200;
+  --gold-light: #FFF4A3;
+  --black-primary: #000000;
+  --black-secondary: #0A0A0A;
+  --black-tertiary: #1A1A1A;
+}
+
+.dark {
+  --background: 0 0% 0%;
+  --foreground: 210 40% 98%;
+  --card: 0 0% 5%;
+  --card-foreground: 210 40% 98%;
+  --popover: 0 0% 5%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 51 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 51 100% 50%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 51 100% 50%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 51 100% 50%;
+  --neon-primary: 346 100% 50%;
+  --neon-secondary: 196 100% 50%;
+  --neon-accent: 60 100% 50%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Smooth transitions for theme switching */
+.transition-colors,
+.transition-opacity,
+.transition-transform,
+.transition-all {
+  transition-duration: 300ms;
+}
+
+/* Speed lines animation */
+@keyframes speed-lines {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.speed-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.speed-line {
+  position: absolute;
+  height: 1px;
+  background-color: white;
+  animation: speed-lines 1.5s linear infinite;
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 768px) {
+  /* Mobile optimizations */
+  body {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  /* Better touch targets for mobile */
+  button, .button, a[role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improved spacing for mobile */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Gallery grid optimizations */
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  
+  /* Better modal sizing on mobile */
+  [role="dialog"] {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Small mobile optimizations */
+  .text-5xl {
+    font-size: 2.5rem !important;
+  }
+  
+  .text-4xl {
+    font-size: 2rem !important;
+  }
+  
+  .text-3xl {
+    font-size: 1.75rem !important;
+  }
+  
+  /* Single column layout for very small screens */
+  .md\:grid-cols-2, .lg\:grid-cols-3, .md\:grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Improved loading states */
+.loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Better scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced focus states for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* UPI and payment related styles */
+.upi-button {
+  background: linear-gradient(135deg, #00CCFF 0%, #0099CC 100%);
+  transition: all 0.3s ease;
+}
+
+.upi-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 204, 255, 0.3);
+}
+
+/* QR Code responsive container */
+.qr-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .qr-container {
+    padding: 0.75rem;
+  }
+}
+
+/* Copy button success animation */
+.copy-success {
+  animation: copySuccess 0.3s ease-in-out;
+}
+
+@keyframes copySuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Enhanced speed lines for mobile */
+@media (max-width: 768px) {
+  .speed-lines {
+    opacity: 0.05;
+  }
+  
+  .speed-line {
+    height: 0.5px;
+  }
+}
+
+/* Better table responsiveness */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.875rem;
+  }
+  
+  th, td {
+    padding: 0.5rem 0.25rem;
+  }
+}
+
+/* Floating elements mobile optimization */
+.floating-element {
+  will-change: transform;
+}
+
+@media (max-width: 768px) {
+  .floating-element {
+    opacity: 0.3;
+  }
+}
+
+/* Donation button mobile positioning */
+.donation-fab {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 50;
+}
+
+@media (max-width: 768px) {
+  .donation-fab {
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+}
+
+/* Better image loading */
+img {
+  loading: lazy;
+}
+
+/* Enhanced carousel for mobile */
+@media (max-width: 768px) {
+  .carousel-item {
+    scroll-snap-align: center;
+  }
+  
+  .carousel-container {
+    scroll-snap-type: x mandatory;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .carousel-container::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Gold utility classes */
+.text-gold { color: var(--gold) !important; }
+.bg-gold { background-color: var(--gold) !important; }
+.border-gold { border-color: var(--gold) !important; }
+.hover\:text-gold:hover { color: var(--gold) !important; }
+.hover\:bg-gold:hover { background-color: var(--gold) !important; }
+.hover\:border-gold:hover { border-color: var(--gold) !important; }
+
+/* Gold gradient utilities */
+.bg-gradient-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Custom gradient utilities */
+@layer utilities {
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+}
+
+/* Photography-themed animations */
+@keyframes aperture-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes focus-scan {
+  0% {
+    border-color: rgba(255, 215, 0, 0.2);
+  }
+  50% {
+    border-color: rgba(255, 215, 0, 0.6);
+  }
+  100% {
+    border-color: rgba(255, 215, 0, 0.2);
+  }
+}
+
+@keyframes lens-flare {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+/* Photography UI elements */
+.aperture-ring {
+  animation: aperture-pulse 3s ease-in-out infinite;
+}
+
+.focus-grid {
+  animation: focus-scan 2s ease-in-out infinite;
+}
+
+.lens-flare {
+  animation: lens-flare 4s ease-in-out infinite;
+}
