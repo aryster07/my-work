@@ -1,4 +1,5 @@
-import { Mail, Send } from "lucide-react"
+import Link from "next/link"
+import { Mail, Send, ArrowLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,6 +15,14 @@ export default function ContactPage() {
           <SpeedLines />
 
           <div className="max-w-6xl mx-auto relative z-10">
+            {/* Back to Home Button */}
+            <Button variant="ghost" asChild className="mb-6 hover:bg-transparent hover:text-gold text-white">
+              <Link href="/" className="flex items-center">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                BACK TO HOME
+              </Link>
+            </Button>
+            
             <div className="inline-block bg-[#FF0040] text-white px-4 py-1 rounded-sm text-sm font-bold mb-6">
               CONTACT
             </div>
@@ -27,30 +36,34 @@ export default function ContactPage() {
                 <h2 className="text-2xl font-bold mb-6 text-white">SEND A MESSAGE</h2>
                 <form className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400">YOUR NAME</label>
+                    <label htmlFor="name" className="text-sm font-medium text-gray-400">YOUR NAME</label>
                     <Input
+                      id="name"
                       placeholder="John Doe"
                       className="bg-black border-gray-800 focus-visible:ring-[#00CCFF] rounded-none"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400">YOUR EMAIL</label>
+                    <label htmlFor="email" className="text-sm font-medium text-gray-400">YOUR EMAIL</label>
                     <Input
+                      id="email"
                       type="email"
                       placeholder="john@example.com"
                       className="bg-black border-gray-800 focus-visible:ring-[#00CCFF] rounded-none"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400">SUBJECT</label>
+                    <label htmlFor="subject" className="text-sm font-medium text-gray-400">SUBJECT</label>
                     <Input
+                      id="subject"
                       placeholder="Photoshoot Inquiry"
                       className="bg-black border-gray-800 focus-visible:ring-[#00CCFF] rounded-none"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400">YOUR MESSAGE</label>
+                    <label htmlFor="message" className="text-sm font-medium text-gray-400">YOUR MESSAGE</label>
                     <Textarea
+                      id="message"
                       placeholder="Tell me about your project..."
                       className="min-h-[150px] bg-black border-gray-800 focus-visible:ring-[#00CCFF] rounded-none"
                     />

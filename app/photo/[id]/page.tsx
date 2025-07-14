@@ -30,8 +30,8 @@ export default async function PhotoPage({ params }: { params: Promise<{ id: stri
         <div className="flex justify-between items-center mb-8">
           <Button variant="ghost" asChild className="group text-white hover:text-gold">
             <Link href={`/category/${photo.category}`} className="flex items-center">
-              <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Back to Gallery
+              <ArrowLeft className="h-6 w-6 md:h-4 md:w-4 transition-transform group-hover:-translate-x-1" />
+              <span className="hidden md:inline ml-2">Back to Gallery</span>
             </Link>
           </Button>
         </div>
