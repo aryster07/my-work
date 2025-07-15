@@ -2,17 +2,89 @@ import Link from "next/link"
 import { Camera } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { CategoryCard } from "@/components/category-card"
 import { AboutSection } from "@/components/about-section"
 import CircularGallery from "@/components/circular-gallery"
+import { CloudinaryThumbnail } from "@/components/cloudinary-thumbnail"
 
 const categories = [
-  { id: "nature", title: "Nature", imageUrl: "/images/categories/nature.jpg" },
-  { id: "sunsets", title: "Sunsets", imageUrl: "/images/categories/sunsets.jpg" },
-  { id: "moon", title: "Moon", imageUrl: "/images/categories/moon.jpg" },
-  { id: "automobile", title: "Automobile", imageUrl: "/images/categories/automobile.jpg" },
-  { id: "cars", title: "Cars", imageUrl: "/images/categories/cars.jpg" },
-  { id: "bikes", title: "Bikes", imageUrl: "/images/categories/bikes.jpg" },
+  { 
+    id: "Astro", 
+    title: "Astro", 
+    folderName: "Astro",
+    description: "Celestial photography and astrophotography"
+  },
+  { 
+    id: "bikes", 
+    title: "Bikes", 
+    folderName: "bikes",
+    description: "Motorcycle and cycling photography"
+  },
+  { 
+    id: "Cars", 
+    title: "Cars", 
+    folderName: "Cars",
+    description: "Automotive photography and car shows"
+  },
+  { 
+    id: "College Events", 
+    title: "College Events", 
+    folderName: "College Events",
+    description: "Campus life and university events"
+  },
+  { 
+    id: "Concerts", 
+    title: "Concerts", 
+    folderName: "Concerts",
+    description: "Live music and performance photography"
+  },
+  { 
+    id: "Danno", 
+    title: "Danno", 
+    folderName: "Danno",
+    description: "Specialized portrait and character photography"
+  },
+  { 
+    id: "Flowers", 
+    title: "Flowers", 
+    folderName: "Flowers",
+    description: "Botanical and floral photography"
+  },
+  { 
+    id: "Lambo", 
+    title: "Lambo", 
+    folderName: "Lambo",
+    description: "Luxury car photography - Lamborghini collection"
+  },
+  { 
+    id: "moon", 
+    title: "Moon", 
+    folderName: "moon",
+    description: "Lunar photography and night sky captures"
+  },
+  { 
+    id: "Mountains", 
+    title: "Mountains", 
+    folderName: "Mountains",
+    description: "Mountain landscapes and scenic vistas"
+  },
+  { 
+    id: "Nature", 
+    title: "Nature", 
+    folderName: "Nature",
+    description: "Wildlife and natural environment photography"
+  },
+  { 
+    id: "skies", 
+    title: "Skies", 
+    folderName: "skies",
+    description: "Winter sports and skiing photography"
+  },
+  { 
+    id: "Sunsets", 
+    title: "Sunsets", 
+    folderName: "Sunsets",
+    description: "Golden hour and sunset photography"
+  },
 ]
 
 export default function HomePage() {
@@ -141,9 +213,15 @@ export default function HomePage() {
               Explore my photography collections across different categories
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
               {categories.map((category) => (
-                <CategoryCard key={category.id} id={category.id} title={category.title} imageUrl={category.imageUrl} />
+                <CloudinaryThumbnail
+                  key={category.id}
+                  id={category.id}
+                  title={category.title}
+                  folderName={category.folderName}
+                  description={category.description}
+                />
               ))}
             </div>
           </div>

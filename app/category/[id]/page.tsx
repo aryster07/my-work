@@ -2,91 +2,98 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { PhotoGallery } from "@/components/photo-gallery"
 import { DonationButton } from "@/components/donation-button"
+import { CloudinaryGallery } from "@/components/cloudinary-gallery"
 
-// This would normally come from a database or API
-const getCategoryData = (id: string) => {
-  const categories = {
-    nature: {
-      title: "Nature",
-      description: "Exploring the beauty of natural landscapes and wildlife",
-      photos: Array.from({ length: 9 }, (_, i) => ({
-        id: i + 1,
-        title: `Nature Photo ${i + 1}`,
-        description: "A beautiful capture of nature's wonders",
-        imageUrl: `/placeholder.svg?height=800&width=1200&text=Nature+${i + 1}`,
-      })),
-    },
-    sunsets: {
-      title: "Sunsets",
-      description: "Magical moments when the sun meets the horizon",
-      photos: Array.from({ length: 6 }, (_, i) => ({
-        id: i + 1,
-        title: `Sunset Photo ${i + 1}`,
-        description: "A stunning sunset captured in all its glory",
-        imageUrl: `/placeholder.svg?height=800&width=1200&text=Sunset+${i + 1}`,
-      })),
-    },
-    moon: {
-      title: "Moon",
-      description: "Celestial beauty of our nearest neighbor",
-      photos: Array.from({ length: 4 }, (_, i) => ({
-        id: i + 1,
-        title: `Moon Photo ${i + 1}`,
-        description: "The moon in its different phases and settings",
-        imageUrl: `/placeholder.svg?height=800&width=1200&text=Moon+${i + 1}`,
-      })),
-    },
-    automobile: {
-      title: "Automobile",
-      description: "The art and engineering of vehicles",
-      photos: Array.from({ length: 8 }, (_, i) => ({
-        id: i + 1,
-        title: `Automobile Photo ${i + 1}`,
-        description: "Showcasing the beauty of automotive design",
-        imageUrl: `/placeholder.svg?height=800&width=1200&text=Automobile+${i + 1}`,
-      })),
-    },
-    cars: {
-      title: "Cars",
-      description: "From classics to modern marvels on four wheels",
-      photos: Array.from({ length: 7 }, (_, i) => ({
-        id: i + 1,
-        title: `Car Photo ${i + 1}`,
-        description: "Stunning car photography from various angles",
-        imageUrl: `/placeholder.svg?height=800&width=1200&text=Car+${i + 1}`,
-      })),
-    },
-    bikes: {
-      title: "Bikes",
-      description: "Two-wheeled machines that represent freedom and adventure",
-      photos: Array.from({ length: 5 }, (_, i) => ({
-        id: i + 1,
-        title: `Bike Photo ${i + 1}`,
-        description: "Motorcycles captured in their natural habitat",
-        imageUrl: `/placeholder.svg?height=800&width=1200&text=Bike+${i + 1}`,
-      })),
-    },
-  }
-
-  return (
-    categories[id as keyof typeof categories] || {
-      title: id.charAt(0).toUpperCase() + id.slice(1),
-      description: "A collection of beautiful photographs",
-      photos: Array.from({ length: 6 }, (_, i) => ({
-        id: i + 1,
-        title: `Photo ${i + 1}`,
-        description: "A beautiful photograph from this collection",
-        imageUrl: `/placeholder.svg?height=800&width=1200&text=${id}+${i + 1}`,
-      })),
-    }
-  )
+// Mapping of URL-friendly IDs to actual Cloudinary folder names
+const folderMapping: { [key: string]: string } = {
+  'astro': 'Astro',
+  'bikes': 'bikes',
+  'cars': 'Cars',
+  'college-events': 'College Events',
+  'concerts': 'Concerts',
+  'danno': 'Danno',
+  'flowers': 'Flowers',
+  'lambo': 'Lambo',
+  'moon': 'moon',
+  'mountains': 'Mountains',
+  'nature': 'Nature',
+  'skies': 'skies',
+  'sunsets': 'Sunsets',
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
+const categoryDescriptions: { [key: string]: { title: string; description: string } } = {
+  'astro': {
+    title: 'Astro Photography',
+    description: 'Celestial photography capturing the wonders of space and night sky'
+  },
+  'bikes': {
+    title: 'Bikes',
+    description: 'Dynamic motorcycle and cycling photography showcasing speed and style'
+  },
+  'cars': {
+    title: 'Cars',
+    description: 'Automotive photography showcasing beautiful car designs and events'
+  },
+  'college-events': {
+    title: 'College Events',
+    description: 'Vibrant campus life and memorable university moments'
+  },
+  'concerts': {
+    title: 'Concerts',
+    description: 'Live music photography capturing the energy and emotion of performances'
+  },
+  'danno': {
+    title: 'Danno',
+    description: 'Specialized portrait and character photography with unique perspectives'
+  },
+  'flowers': {
+    title: 'Flowers',
+    description: 'Delicate botanical photography showcasing nature colorful beauty'
+  },
+  'lambo': {
+    title: 'Lambo',
+    description: 'Luxury automotive photography featuring the iconic Lamborghini collection'
+  },
+  'moon': {
+    title: 'Moon',
+    description: 'Lunar photography capturing Earth celestial companion in detail'
+  },
+  'mountains': {
+    title: 'Mountains',
+    description: 'Majestic mountain landscapes and scenic vista photography'
+  },
+  'nature': {
+    title: 'Nature',
+    description: 'Wildlife and natural environment photography in all its glory'
+  },
+  'skies': {
+    title: 'Skies',
+    description: 'Winter sports and skiing photography capturing snowy adventures'
+  },
+  'sunsets': {
+    title: 'Sunsets',
+    description: 'Golden hour magic and breathtaking sunset photography'
+  },
+}
+
+export default async function CategoryPage({ params }: { readonly params: Promise<{ readonly id: string }> }) {
   const { id } = await params
-  const category = getCategoryData(id)
+  const folderName = folderMapping[id.toLowerCase()]
+  const categoryInfo = categoryDescriptions[id.toLowerCase()]
+
+  if (!folderName || !categoryInfo) {
+    return (
+      <div className="min-h-screen bg-black pt-20 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-4">Category Not Found</h1>
+          <Button asChild>
+            <Link href="/#gallery">Back to Gallery</Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-black pt-20">
@@ -101,10 +108,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
           <DonationButton />
         </div>
 
-        <h1 className="text-3xl md:text-5xl font-bold mb-4 text-white">{category.title}</h1>
-        <p className="text-lg text-gray-400 mb-12 max-w-3xl">{category.description}</p>
+        <div className="mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{categoryInfo.title}</h1>
+          <p className="text-lg text-gray-300 max-w-2xl">{categoryInfo.description}</p>
+        </div>
 
-        <PhotoGallery photos={category.photos} />
+        <CloudinaryGallery folderName={folderName} />
       </div>
     </div>
   )
