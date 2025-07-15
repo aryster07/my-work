@@ -10,8 +10,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const thumbnailUrl = await getFolderThumbnail(folder);
-    return NextResponse.json({ thumbnailUrl });
+    const thumbnailData = await getFolderThumbnail(folder);
+    return NextResponse.json({ thumbnail: thumbnailData });
   } catch (error) {
     console.error('Error fetching folder thumbnail:', error);
     return NextResponse.json({ error: 'Failed to fetch thumbnail' }, { status: 500 });

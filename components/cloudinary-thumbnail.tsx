@@ -13,7 +13,7 @@ interface CloudinaryThumbnailProps {
 }
 
 export function CloudinaryThumbnail({ folderName, title, description, id }: CloudinaryThumbnailProps) {
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
+  const [thumbnailData, setThumbnailData] = useState<{ url: string; aspectRatio: number } | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -21,7 +21,12 @@ export function CloudinaryThumbnail({ folderName, title, description, id }: Clou
       try {
         const response = await fetch(`/api/thumbnail?folder=${encodeURIComponent(folderName)}`)
         const data = await response.json()
-        setThumbnailUrl(data.thumbnailUrl)
+        if (data.thumbnail) {
+          setThumbnailData({
+            url: data.thumbnail.url,
+            aspectRatio: data.thumbnail.aspectRatio || 1.33
+          })
+        }
       } catch (error) {
         console.error('Error fetching thumbnail:', error)
       } finally {
@@ -34,6 +39,14 @@ export function CloudinaryThumbnail({ folderName, title, description, id }: Clou
 
   const slugify = (text: string) => {
     return text.toLowerCase().replace(/\s+/g, '-')
+  }
+
+  const getAspectRatioClass = (ratio: number) => {
+    if (ratio < 0.8) return 'aspect-portrait'
+    if (ratio < 1.2) return 'aspect-square'
+    if (ratio < 1.6) return 'aspect-landscape'
+    if (ratio < 2.0) return 'aspect-wide'
+    return 'aspect-ultrawide'
   }
 
   if (loading) {
@@ -54,14 +67,20 @@ export function CloudinaryThumbnail({ folderName, title, description, id }: Clou
     )
   }
 
+  const aspectRatio = thumbnailData?.aspectRatio || 1.33
+  const aspectClass = getAspectRatioClass(aspectRatio)
+
   return (
     <Link href={`/category/${slugify(id)}`}>
       <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 bg-gray-900 border-gray-800 hover:border-gold/50">
         <CardContent className="p-0">
-          <div className="relative aspect-[4/3] overflow-hidden">
-            {thumbnailUrl ? (
+          <div 
+            className={`relative overflow-hidden ${aspectClass}`}
+            data-aspect-ratio={aspectRatio.toFixed(3)}
+          >
+            {thumbnailData ? (
               <Image
-                src={thumbnailUrl}
+                src={thumbnailData.url}
                 alt={title}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-110"

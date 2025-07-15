@@ -2,24 +2,30 @@ import { v2 as cloudinary } from 'cloudinary';
 
 // Cloudinary configuration
 cloudinary.config({
-  cloud_name: 'dmko2zav7',
-  api_key: '195252934725612',
-  api_secret: '2k2jRQyebgpcKsClcImkS8F9K0Y',
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dmko2zav7',
+  api_key: process.env.CLOUDINARY_API_KEY || '195252934725612',
+  api_secret: process.env.CLOUDINARY_API_SECRET || '2k2jRQyebgpcKsClcImkS8F9K0Y',
 });
 
 export { cloudinary };
 
-export const CLOUDINARY_BASE_URL = "https://res.cloudinary.com/dmko2zav7/image/upload";
+export const CLOUDINARY_BASE_URL = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME || 'dmko2zav7'}/image/upload`;
 
-// Helper function to get optimized image URL
+// Helper function to get optimized image URL with original aspect ratio
 export const getOptimizedImageUrl = (publicId: string, options: {
   width?: number;
   height?: number;
   quality?: string;
   format?: string;
+  crop?: string;
 } = {}) => {
-  const { width = 800, height = 600, quality = 'auto', format = 'auto' } = options;
-  return `${CLOUDINARY_BASE_URL}/w_${width},h_${height},c_fill,q_${quality},f_${format}/${publicId}`;
+  const { width = 800, height, quality = 'auto', format = 'auto', crop = 'limit' } = options;
+  
+  // If height is not specified, let Cloudinary maintain aspect ratio
+  const heightParam = height ? `,h_${height}` : '';
+  const cropParam = crop ? `,c_${crop}` : '';
+  
+  return `${CLOUDINARY_BASE_URL}/w_${width}${heightParam}${cropParam},q_${quality},f_${format}/${publicId}`;
 };
 
 // Function to get folder contents
@@ -35,9 +41,12 @@ export async function getFolderImages(folderName: string) {
       id: index + 1,
       title: `${folderName.charAt(0).toUpperCase() + folderName.slice(1)} Photo ${index + 1}`,
       description: `A beautiful photograph from the ${folderName} collection`,
-      imageUrl: getOptimizedImageUrl(resource.public_id),
+      imageUrl: getOptimizedImageUrl(resource.public_id, { width: 600, crop: 'limit' }),
       originalUrl: resource.secure_url,
       publicId: resource.public_id,
+      width: resource.width,
+      height: resource.height,
+      aspectRatio: resource.width / resource.height,
     }));
   } catch (error) {
     console.error(`Error fetching images from ${folderName}:`, error);
@@ -55,10 +64,13 @@ export async function getFolderThumbnail(folderName: string) {
       .execute();
     
     if (result.resources.length > 0) {
-      return getOptimizedImageUrl(result.resources[0].public_id, {
-        width: 400,
-        height: 300,
-      });
+      const resource = result.resources[0];
+      return {
+        url: getOptimizedImageUrl(resource.public_id, { width: 500, crop: 'limit' }),
+        width: resource.width,
+        height: resource.height,
+        aspectRatio: resource.width / resource.height,
+      };
     }
     
     return null;
