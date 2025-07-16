@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Camera } from "lucide-react"
 
@@ -5,6 +8,14 @@ import { Button } from "@/components/ui/button"
 import { AboutSection } from "@/components/about-section"
 import CircularGallery from "@/components/circular-gallery"
 import { CloudinaryThumbnail } from "@/components/cloudinary-thumbnail"
+
+interface CarouselImage {
+  publicId: string
+  url: string
+  originalUrl: string
+  width: number
+  height: number
+}
 
 const categories = [
   { 
@@ -88,6 +99,38 @@ const categories = [
 ]
 
 export default function HomePage() {
+  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>([])
+  const [carouselItems, setCarouselItems] = useState<{ image: string; text: string }[]>([])
+
+  useEffect(() => {
+    // Fetch carousel images
+    const fetchCarouselImages = async () => {
+      try {
+        const response = await fetch('/api/carousel')
+        const data = await response.json()
+        
+        if (data.images && data.images.length > 0) {
+          setCarouselImages(data.images)
+          
+          // Shuffle images for random display
+          const shuffled = [...data.images].sort(() => Math.random() - 0.5)
+          
+          // Convert to carousel format
+          const items = shuffled.map((img: CarouselImage) => ({
+            image: img.url,
+            text: "" // No text as requested
+          }))
+          
+          setCarouselItems(items)
+        }
+      } catch (error) {
+        console.error('Error fetching carousel images:', error)
+      }
+    }
+
+    fetchCarouselImages()
+  }, [])
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
@@ -179,11 +222,12 @@ export default function HomePage() {
             {/* Free-flowing Curved Gallery - Above Text */}
             <div className="w-screen h-64 md:h-80 lg:h-96 mb-8 -mx-4">
               <CircularGallery
+                items={carouselItems.length > 0 ? carouselItems : undefined}
                 bend={3}
                 textColor="#FFFFFF"
                 borderRadius={0.08}
-                scrollEase={0.005}
-                autoScrollSpeed={0.08}
+                scrollEase={0.15}
+                autoScrollSpeed={0.12}
               />
             </div>
 
@@ -213,7 +257,7 @@ export default function HomePage() {
               Explore my photography collections across different categories
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
               {categories.map((category) => (
                 <CloudinaryThumbnail
                   key={category.id}

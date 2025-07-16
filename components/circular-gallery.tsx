@@ -289,14 +289,17 @@ class Media {
     }
 
     createTitle() {
-        this.title = new Title({
-            gl: this.gl,
-            plane: this.plane,
-            renderer: this.renderer,
-            text: this.text,
-            textColor: this.textColor,
-            font: this.font,
-        });
+        // Skip creating title if text is empty (no captions)
+        if (this.text && this.text.trim() !== "") {
+            this.title = new Title({
+                gl: this.gl,
+                plane: this.plane,
+                renderer: this.renderer,
+                text: this.text,
+                textColor: this.textColor,
+                font: this.font,
+            });
+        }
     }
 
     update(scroll: { current: number; last: number }) {
@@ -403,14 +406,23 @@ class App {
             textColor = "#ffffff",
             borderRadius = 0,
             font = "bold 30px Figtree",
-            scrollEase = 0.05,
+            scrollEase = 0.15, // Increased for smoother performance
             autoScrollSpeed = 0.5,
         }: AppConfig
     ) {
         document.documentElement.classList.remove("no-js");
         this.container = container;
         this.autoScrollSpeed = autoScrollSpeed;
-        this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
+        
+        // Start at a random position to appear already in motion
+        const initialPosition = Math.random() * 100;
+        this.scroll = { 
+            ease: scrollEase, 
+            current: initialPosition, 
+            target: initialPosition, 
+            last: initialPosition 
+        };
+        
         this.createRenderer();
         this.createCamera();
         this.createScene();
@@ -418,6 +430,8 @@ class App {
         this.createGeometry();
         this.createMedias(items, textColor, borderRadius, font, bend);
         this.lastTime = performance.now();
+        
+        // Start animation immediately
         this.update();
         this.addEventListeners();
     }
@@ -455,52 +469,52 @@ class App {
     ) {
         const defaultItems = [
             {
-                image: "/images/carousel/photo1.jpg",
-                text: "Nature Shot",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/103-IMG_0106_addfsq",
+                text: "",
             },
             {
-                image: "/images/carousel/photo2.jpg", 
-                text: "Sunset Magic",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/11-DSC00926_ps9xyf", 
+                text: "",
             },
             {
-                image: "/images/carousel/photo3.jpg",
-                text: "Moon Light",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/11-DSC01061_bgyv56",
+                text: "",
             },
             {
-                image: "/images/carousel/photo4.jpg",
-                text: "City Vibes",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/113-_DSC0041_hmyzd7",
+                text: "",
             },
             {
-                image: "/images/carousel/photo5.jpg",
-                text: "Portrait",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/15-DSC01450_c6eywj",
+                text: "",
             },
             {
-                image: "/images/carousel/photo6.jpg",
-                text: "Landscape",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/15-IMG_3058_pdrthm",
+                text: "",
             },
             {
-                image: "/images/carousel/photo7.jpg",
-                text: "Street Style",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/17-DSC00499_vlwkc1",
+                text: "",
             },
             {
-                image: "/images/carousel/photo8.jpg",
-                text: "Golden Hour",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/19-DSC01967_jzc7cs",
+                text: "",
             },
             {
-                image: "/images/carousel/photo9.jpg",
-                text: "Architecture",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/19-DSC02692_tkt3fu",
+                text: "",
             },
             {
-                image: "/images/carousel/photo10.jpg",
-                text: "Wildlife",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/2-DSC03201_rwysnx",
+                text: "",
             },
             {
-                image: "/images/carousel/photo11.jpg",
-                text: "Abstract",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/25-IMG_0114_rgsq9p",
+                text: "",
             },
             {
-                image: "/images/carousel/photo12.jpg",
-                text: "Minimalist",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/26-IMG_0107_kahuhv",
+                text: "",
             },
         ];
         const galleryItems = items && items.length ? items : defaultItems;
@@ -548,12 +562,13 @@ class App {
         this.deltaTime = (now - this.lastTime) / 1000; // Convert to seconds
         this.lastTime = now;
 
-        // Clamp deltaTime to prevent large jumps when tab becomes visible again
-        this.deltaTime = Math.min(this.deltaTime, 1/30); // Cap at 30fps equivalent
+        // Clamp deltaTime to prevent large jumps and improve performance
+        this.deltaTime = Math.min(this.deltaTime, 1/60); // Cap at 60fps equivalent for smoother motion
 
-        // Apply delta time to make speed consistent across different frame rates
-        this.scroll.target += this.autoScrollSpeed * this.deltaTime * 60; // Multiply by 60 to match previous behavior
+        // Apply delta time with consistent speed
+        this.scroll.target += this.autoScrollSpeed * this.deltaTime * 80; // Slightly faster multiplier for smoother motion
         
+        // Use smoother interpolation
         this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
         
         if (this.medias) {
@@ -562,6 +577,8 @@ class App {
         
         this.renderer.render({ scene: this.scene, camera: this.camera });
         this.scroll.last = this.scroll.current;
+        
+        // Use requestAnimationFrame for optimal performance
         this.raf = window.requestAnimationFrame(this.update.bind(this));
     }
 
@@ -599,24 +616,52 @@ export default function CircularGallery({
     textColor = "#ffffff",
     borderRadius = 0.05,
     font = "bold 30px Figtree",
-    scrollEase = 0.05,
-    autoScrollSpeed = 0.1,
-}: CircularGalleryProps) {
+    scrollEase = 0.15, // Increased default for smoother motion
+    autoScrollSpeed = 0.12, // Slightly faster for better continuity
+}: Readonly<CircularGalleryProps>) {
     const containerRef = useRef<HTMLDivElement>(null);
+    const appRef = useRef<App | null>(null);
+
     useEffect(() => {
         if (!containerRef.current) return;
-        const app = new App(containerRef.current, {
-            items,
-            bend,
-            textColor,
-            borderRadius,
-            font,
-            scrollEase,
-            autoScrollSpeed,
-        });
+        
+        // Add a small delay to ensure DOM is ready and reduce initial lag
+        const initTimeout = setTimeout(() => {
+            // Destroy existing app if it exists
+            if (appRef.current) {
+                appRef.current.destroy();
+            }
+            
+            // Create new app with current items
+            appRef.current = new App(containerRef.current!, {
+                items,
+                bend,
+                textColor,
+                borderRadius,
+                font,
+                scrollEase,
+                autoScrollSpeed,
+            });
+        }, 100); // Small delay for smoother initialization
+        
         return () => {
-            app.destroy();
+            clearTimeout(initTimeout);
+            if (appRef.current) {
+                appRef.current.destroy();
+                appRef.current = null;
+            }
         };
     }, [items, bend, textColor, borderRadius, font, scrollEase, autoScrollSpeed]);
-    return <div className="w-full h-full overflow-hidden" ref={containerRef} />;
+    
+    return (
+        <div 
+            className="w-full h-full overflow-hidden" 
+            ref={containerRef}
+            style={{ 
+                // Ensure hardware acceleration for smoother performance
+                transform: 'translateZ(0)',
+                willChange: 'transform'
+            }}
+        />
+    );
 }
