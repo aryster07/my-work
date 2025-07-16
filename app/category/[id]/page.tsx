@@ -10,7 +10,7 @@ const folderMapping: { [key: string]: string } = {
   'astro': 'Astro',
   'bikes': 'bikes',
   'cars': 'Cars',
-  'college-events': 'College Events',
+  'college': 'College Events',
   'concerts': 'Concerts',
   'danno': 'Danno',
   'flowers': 'Flowers',
@@ -35,8 +35,8 @@ const categoryDescriptions: { [key: string]: { title: string; description: strin
     title: 'Cars',
     description: 'Automotive photography showcasing beautiful car designs and events'
   },
-  'college-events': {
-    title: 'College Events',
+  'college': {
+    title: 'College',
     description: 'Vibrant campus life and memorable university moments'
   },
   'concerts': {
@@ -109,8 +109,8 @@ export default async function CategoryPage({ params }: { readonly params: Promis
         </div>
 
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{categoryInfo.title}</h1>
-          <p className="text-lg text-gray-300 max-w-2xl">{categoryInfo.description}</p>
+          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white mb-4 text-left leading-tight break-words">{categoryInfo.title}</h1>
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl text-left">{categoryInfo.description}</p>
         </div>
 
         <CloudinaryGallery folderName={folderName} />

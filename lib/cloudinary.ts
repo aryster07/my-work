@@ -56,9 +56,12 @@ export const getOptimizedImageUrl = (publicId: string, options: {
 // Function to get folder contents with smart cropping
 export async function getFolderImages(folderName: string) {
   try {
+    // Escape folder names with spaces
+    const escapedFolderName = folderName.replace(/\s/g, '\\ ');
+    
     const result = await cloudinary.search
-      .expression(`folder:portfolio_uploads/${folderName}`)
-      .max_results(50) // Increased limit for better UX
+      .expression(`folder:portfolio_uploads/${escapedFolderName}`)
+      .max_results(500) // Increased to get all images (Cloudinary max is 500 per call)
       .execute();
     
     return result.resources.map((resource: any, index: number) => {
@@ -70,7 +73,8 @@ export async function getFolderImages(folderName: string) {
         title: `${folderName.charAt(0).toUpperCase() + folderName.slice(1)} Photo ${index + 1}`,
         description: `A beautiful photograph from the ${folderName} collection`,
         imageUrl: getOptimizedImageUrl(resource.public_id, { 
-          width: 600, 
+          width: 400, 
+          quality: '70',
           aspectRatio,
           useSmartCrop: true 
         }),
@@ -93,8 +97,11 @@ export async function getFolderImages(folderName: string) {
 // Function to get the first image from a folder as thumbnail with smart cropping
 export async function getFolderThumbnail(folderName: string) {
   try {
+    // Escape folder names with spaces
+    const escapedFolderName = folderName.replace(/\s/g, '\\ ');
+    
     const result = await cloudinary.search
-      .expression(`folder:portfolio_uploads/${folderName}`)
+      .expression(`folder:portfolio_uploads/${escapedFolderName}`)
       .max_results(1)
       .execute();
     
@@ -104,7 +111,8 @@ export async function getFolderThumbnail(folderName: string) {
       
       return {
         url: getOptimizedImageUrl(resource.public_id, { 
-          width: 500, 
+          width: 400, 
+          quality: '70',
           aspectRatio,
           useSmartCrop: true 
         }),

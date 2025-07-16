@@ -439,3 +439,12 @@ img {
   display: inline-block;
   width: 100%;
 }
+
+/* Animation delay utilities */
+.delay-1000 {
+  animation-delay: 1s;
+}
+
+.delay-2000 {
+  animation-delay: 2s;
+}

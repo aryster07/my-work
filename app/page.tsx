@@ -22,84 +22,83 @@ const categories = [
     id: "Astro", 
     title: "Astro", 
     folderName: "Astro",
-    description: "Celestial photography and astrophotography"
+    description: ""
   },
   { 
     id: "bikes", 
     title: "Bikes", 
     folderName: "bikes",
-    description: "Motorcycle and cycling photography"
+    description: ""
   },
   { 
     id: "Cars", 
     title: "Cars", 
     folderName: "Cars",
-    description: "Automotive photography and car shows"
+    description: ""
   },
   { 
-    id: "College Events", 
-    title: "College Events", 
+    id: "college", 
+    title: "College", 
     folderName: "College Events",
-    description: "Campus life and university events"
+    description: ""
   },
   { 
     id: "Concerts", 
     title: "Concerts", 
     folderName: "Concerts",
-    description: "Live music and performance photography"
+    description: ""
   },
   { 
     id: "Danno", 
     title: "Danno", 
     folderName: "Danno",
-    description: "Specialized portrait and character photography"
+    description: ""
   },
   { 
     id: "Flowers", 
     title: "Flowers", 
     folderName: "Flowers",
-    description: "Botanical and floral photography"
+    description: ""
   },
   { 
     id: "Lambo", 
     title: "Lambo", 
     folderName: "Lambo",
-    description: "Luxury car photography - Lamborghini collection"
+    description: ""
   },
   { 
     id: "moon", 
     title: "Moon", 
     folderName: "moon",
-    description: "Lunar photography and night sky captures"
+    description: ""
   },
   { 
     id: "Mountains", 
     title: "Mountains", 
     folderName: "Mountains",
-    description: "Mountain landscapes and scenic vistas"
+    description: ""
   },
   { 
     id: "Nature", 
     title: "Nature", 
     folderName: "Nature",
-    description: "Wildlife and natural environment photography"
+    description: ""
   },
   { 
     id: "skies", 
     title: "Skies", 
     folderName: "skies",
-    description: "Winter sports and skiing photography"
+    description: ""
   },
   { 
     id: "Sunsets", 
     title: "Sunsets", 
     folderName: "Sunsets",
-    description: "Golden hour and sunset photography"
+    description: ""
   },
 ]
 
 export default function HomePage() {
-  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>([])
   const [carouselItems, setCarouselItems] = useState<{ image: string; text: string }[]>([])
 
   useEffect(() => {
@@ -110,8 +109,6 @@ export default function HomePage() {
         const data = await response.json()
         
         if (data.images && data.images.length > 0) {
-          setCarouselImages(data.images)
-          
           // Shuffle images for random display
           const shuffled = [...data.images].sort(() => Math.random() - 0.5)
           
@@ -193,8 +190,8 @@ export default function HomePage() {
             
             {/* Tiny Focus Points */}
             <div className="absolute top-28 right-40 w-1 h-1 bg-gold/30 rounded-full animate-pulse opacity-40"></div>
-            <div className="absolute bottom-36 left-24 w-1 h-1 bg-gold/30 rounded-full animate-pulse opacity-35" style={{animationDelay: '1s'}}></div>
-            <div className="absolute top-52 left-48 w-1 h-1 bg-gold/30 rounded-full animate-pulse opacity-30" style={{animationDelay: '2s'}}></div>
+            <div className="absolute bottom-36 left-24 w-1 h-1 bg-gold/30 rounded-full animate-pulse opacity-35 delay-1000"></div>
+            <div className="absolute top-52 left-48 w-1 h-1 bg-gold/30 rounded-full animate-pulse opacity-30 delay-2000"></div>
 
             {/* Speed Lines Effect */}
             <div className="speed-lines">
@@ -204,12 +201,6 @@ export default function HomePage() {
                   <div
                     key={uniqueId}
                     className="speed-line"
-                    style={{
-                      top: `${Math.random() * 100}%`,
-                      width: `${Math.random() * 100 + 50}px`,
-                      animationDuration: `${Math.random() * 2 + 1}s`,
-                      animationDelay: `${Math.random() * 2}s`,
-                    }}
                   />
                 );
               })}
@@ -217,10 +208,10 @@ export default function HomePage() {
           </div>
 
           {/* Main Content Container - Centered */}
-          <div className="relative z-10 flex flex-col items-center justify-center px-4 w-full">
+          <div className="relative z-10 flex flex-col items-center justify-center px-4 w-full space-y-12">
             
             {/* Free-flowing Curved Gallery - Above Text */}
-            <div className="w-screen h-64 md:h-80 lg:h-96 mb-8 -mx-4">
+            <div className="w-screen h-64 md:h-80 lg:h-96 -mx-4">
               <CircularGallery
                 items={carouselItems.length > 0 ? carouselItems : undefined}
                 bend={3}
@@ -232,11 +223,11 @@ export default function HomePage() {
             </div>
 
             {/* Hero Text Content - Below Carousel */}
-            <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 tracking-tight leading-tight">
+            <div className="text-center max-w-4xl mx-auto space-y-8">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight">
                 7frames_aryan
               </h1>
-              <p className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-6 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
                 I shoot everything, just not with a gun (Yet) 💀
               </p>
               <Button asChild size="lg" className="rounded-xl bg-gold hover:bg-gold/90 text-black font-semibold border-0 px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
@@ -250,14 +241,16 @@ export default function HomePage() {
         </section>
 
         {/* Gallery Categories Section */}
-        <section id="gallery" className="py-20 px-4">
+        <section id="gallery" className="py-24 md:py-32 px-4">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">My Gallery</h2>
-            <p className="text-lg text-gray-400 text-center mb-12 max-w-2xl mx-auto">
-              Explore my photography collections across different categories
-            </p>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">My Gallery</h2>
+              <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Explore my photography collections across different categories, each telling a unique story through the lens
+              </p>
+            </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
               {categories.map((category) => (
                 <CloudinaryThumbnail
                   key={category.id}
@@ -272,25 +265,29 @@ export default function HomePage() {
         </section>
 
         {/* Support Call-to-Action Section */}
-        <section className="py-16 px-4 bg-gradient-to-r from-black via-gray-900 to-black">
+        <section className="py-20 md:py-24 px-4 bg-gradient-to-r from-black via-gray-900 to-black">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Love My Work? Help Me Keep Shooting! 📸
-            </h2>
-            <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-              Your support helps me afford better gear, explore new locations, and create even more stunning photography for you to enjoy.
-            </p>
-            <Button asChild size="lg" className="rounded-lg bg-gold hover:bg-gold/80 text-black font-semibold border-0">
-              <Link href="/support">
-                Support My Photography Journey
-                <Camera className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="space-y-8">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
+                Love My Work? Help Me Keep Shooting! 📸
+              </h2>
+              <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                Your support helps me afford better gear, explore new locations, and create even more stunning photography for you to enjoy.
+              </p>
+              <Button asChild size="lg" className="rounded-lg bg-gold hover:bg-gold/80 text-black font-semibold border-0 px-8 py-4 text-lg">
+                <Link href="/support">
+                  Support My Photography Journey
+                  <Camera className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
 
         {/* About Me Section */}
-        <AboutSection />
+        <div className="py-16 md:py-20">
+          <AboutSection />
+        </div>
       </main>
     </div>
   )

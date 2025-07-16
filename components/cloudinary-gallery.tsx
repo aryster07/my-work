@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Download } from 'lucide-react'
 import AppreciationDialog from './appreciation-dialog'
 
 interface CloudinaryImage {
@@ -26,26 +29,16 @@ interface CloudinaryGalleryProps {
 export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProps>) {
   const [images, setImages] = useState<CloudinaryImage[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedImage, setSelectedImage] = useState<CloudinaryImage | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [showDonationDialog, setShowDonationDialog] = useState(false)
-  const imagesPerPage = 24 // Better UX for large galleries
+  const [selectedImage, setSelectedImage] = useState<CloudinaryImage | null>(null)
+  const imagesPerPage = 36 // Increased for better UX with large galleries
 
   // Calculate pagination
   const totalPages = Math.ceil(images.length / imagesPerPage)
   const startIndex = (currentPage - 1) * imagesPerPage
   const endIndex = startIndex + imagesPerPage
   const currentImages = images.slice(startIndex, endIndex)
-
-  const getOptimalHeight = (image: CloudinaryImage) => {
-    if (image.isLandscape) {
-      return 'h-32 sm:h-40 md:h-48'
-    }
-    if (image.aspectRatio < 0.7) {
-      return 'h-48 sm:h-56 md:h-64 lg:h-72'
-    }
-    return 'h-40 sm:h-48 md:h-56'
-  }
 
   useEffect(() => {
     async function fetchImages() {
@@ -65,7 +58,11 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-4">
+      <>
+        <div className="flex justify-between items-center mb-6">
+          <div className="text-gray-400">Loading images...</div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-4">
         {Array.from({ length: 12 }, (_, i) => (
           <Card key={i} className="overflow-hidden bg-gray-900 border-gray-800">
             <CardContent className="p-0">
@@ -78,6 +75,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
           </Card>
         ))}
       </div>
+      </>
     )
   }
 
@@ -95,74 +93,78 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
 
   return (
     <>
-      {/* Masonry Layout - Optimized for Visual Appeal */}
-      <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 xl:columns-6 gap-1 sm:gap-2 space-y-1 sm:space-y-2">
+      {/* Gallery Header with Image Count */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="text-gray-400">
+          {images.length} {images.length === 1 ? 'image' : 'images'} 
+          {totalPages > 1 && (
+            <span className="ml-2">• Page {currentPage} of {totalPages}</span>
+          )}
+        </div>
+        <div className="text-sm text-gray-500">
+          {totalPages > 1 && (
+            <span>Page {currentPage} of {totalPages}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Image Grid */}
+      {/* Masonry Layout with Instagram-style Aspect Ratios */}
+      <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 xl:columns-6 gap-3 sm:gap-4 space-y-3 sm:space-y-4">
         {currentImages.map((image) => {
-          // Dynamic height based on aspect ratio for better masonry effect
-          const heightClass = getOptimalHeight(image)
-          
+          // Instagram-style aspect ratio logic
+          const getAspectRatioClass = () => {
+            if (image.isLandscape) {
+              // Landscape: Use 16:9 or similar wide format
+              return 'aspect-[16/9]'
+            } else if (image.aspectRatio < 0.8) {
+              // Portrait: Use Instagram's 4:5 ratio
+              return 'aspect-[4/5]'
+            } else {
+              // Square or near-square: Use 1:1
+              return 'aspect-square'
+            }
+          }
+
           return (
             <div 
               key={image.id} 
-              className={`break-inside-avoid mb-1 sm:mb-2 ${heightClass}`}
+              className="break-inside-avoid mb-3 sm:mb-4"
             >
-              <Card
-                className="group overflow-hidden cursor-pointer bg-gray-900/50 border-gray-800/50 hover:border-gold/50 transition-all duration-300 h-full backdrop-blur-sm relative"
-                onClick={() => setSelectedImage(image)}
-              >
-                <CardContent className="p-0 h-full relative">
-                  <div className="relative overflow-hidden h-full rounded-lg">
-                    <Image
-                      src={image.imageUrl}
-                      alt={image.title}
-                      fill
-                      className="object-cover transition-all duration-500 group-hover:scale-105 group-hover:brightness-110"
-                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
-                    />
-                    
-                    {/* Subtle hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent group-hover:from-black/30 transition-all duration-300" />
-                    
-                    {/* Small download button in bottom-right corner */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation() // Prevent opening modal
-                        e.preventDefault() // Prevent any default behavior
-                        
-                        // Enhanced download logic
-                        try {
-                          const link = document.createElement('a')
-                          link.href = image.originalUrl
-                          link.download = `${image.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
-                          link.target = '_blank'
-                          link.rel = 'noopener noreferrer'
-                          
-                          // Force download
-                          document.body.appendChild(link)
-                          link.click()
-                          document.body.removeChild(link)
-                          
-                          // Show appreciation dialog after download
-                          setTimeout(() => {
-                            setShowDonationDialog(true)
-                          }, 1000)
-                        } catch (error) {
-                          console.error('Download failed:', error)
-                          // Fallback: open in new tab
-                          window.open(image.originalUrl, '_blank')
-                        }
-                      }}
-                      className="absolute bottom-2 right-2 bg-black/80 hover:bg-black text-white p-2 rounded-full transition-all duration-200 shadow-lg z-10"
-                      aria-label="Download image"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </button>
-                    
-                    {/* Small indicator line at bottom */}
-                    <div className="absolute bottom-1 left-1 w-0 h-0.5 bg-gold group-hover:w-6 transition-all duration-300"></div>
-                  </div>
+              <Card className="overflow-hidden bg-gray-900 border-gray-700 hover:border-gold/50 transition-all duration-300">
+                {/* Image Section Only */}
+                <CardContent className="p-0 relative">
+                  <button 
+                    className="relative overflow-hidden cursor-pointer w-full h-full bg-transparent border-none p-0"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      // Open image in modal popup
+                      setSelectedImage(image)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setSelectedImage(image)
+                      }
+                    }}
+                    aria-label={`View ${image.title} in full size`}
+                  >
+                    <div className={`relative ${getAspectRatioClass()}`}>
+                      <Image
+                        src={image.imageUrl}
+                        alt={image.title}
+                        fill
+                        className="object-cover transition-all duration-500 hover:scale-105 hover:brightness-110"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
+                      />
+                      
+                      {/* Always visible glassy download icon on image */}
+                      <div className="absolute bottom-2 right-2 bg-black/30 backdrop-blur-md border border-white/20 rounded-full p-2 shadow-lg">
+                        <Download className="w-4 h-4 text-white" />
+                      </div>
+                    </div>
+                  </button>
                 </CardContent>
               </Card>
             </div>
@@ -211,66 +213,66 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
         </div>
       )}
 
-      {/* Clean Image Preview Modal */}
-      {selectedImage && (
-        <div className="fixed inset-0 z-50 bg-black">
-          {/* Close button */}
-          <button
-            className="absolute top-4 right-4 z-20 text-white/80 hover:text-white p-2 rounded-full bg-black/30 hover:bg-black/50 transition-all"
-            onClick={() => setSelectedImage(null)}
-            aria-label="Close preview"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+      {/* Image Modal Popup */}
+      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+        <DialogContent className="max-w-7xl w-[98vw] h-[98vh] md:w-[95vw] md:h-[95vh] p-0 bg-black/95 border-gray-800">
+          {selectedImage && (
+            <div className="relative w-full h-full flex flex-col">
+              {/* Image container */}
+              <div className="flex-1 flex flex-col items-center justify-center p-2 md:p-4">
+                <div className="relative max-w-full max-h-full mb-4 md:mb-6">
+                  <Image
+                    src={`https://res.cloudinary.com/dmko2zav7/image/upload/q_80,f_auto,w_1200/${selectedImage.publicId}`}
+                    alt={selectedImage.title}
+                    width={selectedImage.width}
+                    height={selectedImage.height}
+                    className="max-w-full max-h-[70vh] md:max-h-[75vh] w-auto h-auto object-contain"
+                    quality={85}
+                    priority
+                  />
+                </div>
 
-          {/* Image */}
-          <button 
-            className="absolute inset-0 flex items-center justify-center p-4 bg-transparent border-0 cursor-pointer"
-            onClick={() => setSelectedImage(null)}
-            aria-label="Close preview by clicking background"
-          >
-            <Image
-              src={selectedImage.originalUrl}
-              alt={selectedImage.title}
-              width={1200}
-              height={800}
-              className="max-w-full max-h-full object-contain pointer-events-none"
-            />
-          </button>
-
-          {/* Action Buttons - Bottom Center */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
-            <button
-              className="bg-white/90 text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-white transition-all shadow-lg backdrop-blur-sm text-sm"
-              onClick={(e) => {
-                e.stopPropagation()
-                // Download logic with post-download popup
-                const link = document.createElement('a')
-                link.href = selectedImage.originalUrl
-                link.download = `${selectedImage.title}.jpg`
-                document.body.appendChild(link)
-                link.click()
-                document.body.removeChild(link)
-                
-                // Show appreciation popup after download
-                setTimeout(() => {
-                  setShowDonationDialog(true)
-                }, 1000)
-              }}
-            >
-              Download
-            </button>
-          </div>
-        </div>
-      )}
+                {/* Download button under the image */}
+                <Button
+                  onClick={() => {
+                    // Enhanced download logic
+                    try {
+                      const link = document.createElement('a')
+                      link.href = selectedImage.originalUrl
+                      link.download = `${selectedImage.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
+                      link.target = '_blank'
+                      link.rel = 'noopener noreferrer'
+                      
+                      document.body.appendChild(link)
+                      link.click()
+                      document.body.removeChild(link)
+                      
+                      // Show appreciation dialog after download
+                      setTimeout(() => {
+                        setShowDonationDialog(true)
+                      }, 1000)
+                    } catch (error) {
+                      console.error('Download failed:', error)
+                      // Fallback: open in new tab
+                      window.open(selectedImage.originalUrl, '_blank')
+                    }
+                  }}
+                  className="bg-gold hover:bg-gold/90 text-black font-semibold px-6 py-3 md:px-8 md:py-3 rounded-lg transition-colors touch-manipulation"
+                >
+                  <Download className="w-5 h-5 mr-2" />
+                  Download Image
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Appreciation Dialog */}
       <AppreciationDialog
         isOpen={showDonationDialog}
         onClose={() => setShowDonationDialog(false)}
-        photoTitle={selectedImage?.title}
+        photoTitle={undefined}
       />
     </>
   )
