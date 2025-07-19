@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "buildCommand": "pnpm build",
+  "devCommand": "pnpm dev",
+  "installCommand": "pnpm install --frozen-lockfile=false",
   "builds": [
     {
       "src": "package.json",
