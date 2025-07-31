@@ -192,7 +192,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                       
                       {/* Always visible glassy download icon on image - opens preview */}
                       <button
-                        className="absolute bottom-2 right-2 bg-black/30 backdrop-blur-md border border-white/20 rounded-full p-2.5 shadow-lg hover:bg-black/50 transition-colors z-20 flex items-center justify-center w-10 h-10"
+                        className="absolute bottom-2 right-2 bg-black/40 backdrop-blur-sm border border-white/30 rounded-full w-9 h-9 shadow-lg hover:bg-black/60 transition-all duration-200 z-20 flex items-center justify-center"
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
@@ -258,7 +258,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
         <DialogContent className="max-w-6xl w-[calc(100vw-2rem)] h-[calc(100vh-2rem)] md:w-[90vw] md:h-[90vh] p-0 bg-black/95 border-gray-800">
           {selectedImage && (
-            <div className="relative w-full h-full flex flex-col items-center justify-center">
+            <div className="relative w-full h-full flex flex-col">
               {/* Image container */}
               <div className="flex-1 flex items-center justify-center p-4 md:p-6">
                 <div className="relative">
@@ -281,8 +281,10 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                     onContextMenu={(e) => e.preventDefault()}
                   />
                 </div>
+              </div>
 
-                {/* Download button under the image */}
+              {/* Download button centered below image */}
+              <div className="flex justify-center pb-6">
                 <Button
                   onClick={async () => {
                     try {
@@ -314,7 +316,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                       alert('Download failed. Please try again.')
                     }
                   }}
-                  className="bg-gold hover:bg-gold/90 text-black font-semibold px-8 py-3 rounded-lg transition-colors mb-4"
+                  className="bg-gold hover:bg-gold/90 text-black font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg"
                 >
                   <Download className="w-5 h-5 mr-2" />
                   Download Image
