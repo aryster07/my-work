@@ -496,3 +496,28 @@ input:focus-visible {
 .delay-2000 {
   animation-delay: 2s;
 }
+
+/* Shimmer animation for download progress */
+@keyframes shimmer {
+  0% { 
+    background-position: -200% 0; 
+  }
+  100% { 
+    background-position: 200% 0; 
+  }
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 1s infinite;
+}
+
+.download-progress-bar {
+  transition: width 300ms ease-out;
+  width: 0%;
+}
+
+.download-progress-bar[data-progress="25"] { width: 25%; }
+.download-progress-bar[data-progress="50"] { width: 50%; }
+.download-progress-bar[data-progress="75"] { width: 75%; }
+.download-progress-bar[data-progress="100"] { width: 100%; }

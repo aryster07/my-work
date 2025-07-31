@@ -1,13 +1,12 @@
 'use client'
 
 import { useEffect } from 'react'
-import { detectDevTools, detectScreenRecording } from '@/lib/security-utils'
 
 export function ImageProtection() {
   useEffect(() => {
     // Initialize security systems
-    detectDevTools()
-    detectScreenRecording()
+    // detectDevTools()
+    // detectScreenRecording()
     
     // Disable right-click context menu
     const handleContextMenu = (e: MouseEvent) => {
@@ -72,10 +71,19 @@ export function ImageProtection() {
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('beforeprint', handleBeforePrint)
 
-    // Disable clipboard operations
-    document.addEventListener('copy', (e) => e.preventDefault())
-    document.addEventListener('cut', (e) => e.preventDefault())
-    document.addEventListener('paste', (e) => e.preventDefault())
+    // Disable clipboard operations only for image elements and general copy/cut
+    // Allow legitimate clipboard operations from buttons and components
+    const handleClipboard = (e: ClipboardEvent) => {
+      const target = e.target as HTMLElement
+      // Only prevent clipboard on images or when trying to copy selected content
+      if (target.tagName === 'IMG' || window.getSelection()?.toString()) {
+        e.preventDefault()
+      }
+    }
+
+    document.addEventListener('copy', handleClipboard)
+    document.addEventListener('cut', handleClipboard)
+    // Don't prevent paste as it's rarely used for stealing content
 
     // Mobile-specific protections
     // Disable long press on mobile
@@ -119,6 +127,8 @@ export function ImageProtection() {
       document.removeEventListener('dragstart', handleDragStart)
       document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('beforeprint', handleBeforePrint)
+      document.removeEventListener('copy', handleClipboard)
+      document.removeEventListener('cut', handleClipboard)
       document.removeEventListener('touchstart', handleTouchStart)
       document.removeEventListener('touchend', handleTouchEnd)
       document.removeEventListener('touchmove', handleTouchMove)

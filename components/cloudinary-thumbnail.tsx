@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
+import { ProgressiveImage } from './progressive-image'
 
 interface CloudinaryThumbnailProps {
   folderName: string
@@ -71,7 +71,7 @@ export function CloudinaryThumbnail({ folderName, title, description, id }: Read
           
           {/* Image Content */}
           {thumbnailUrl ? (
-            <Image
+            <ProgressiveImage
               src={thumbnailUrl}
               alt={title}
               fill

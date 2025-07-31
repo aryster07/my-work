@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 import AppreciationDialog from './appreciation-dialog'
 import CreditDialog from './credit-dialog'
+import { ProgressiveImage } from './progressive-image'
+import { DownloadDialog } from './download-dialog'
 
 interface CloudinaryImage {
   id: number
@@ -33,6 +34,8 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
   const [showDonationDialog, setShowDonationDialog] = useState(false)
   const [showCreditDialog, setShowCreditDialog] = useState(false)
   const [selectedImage, setSelectedImage] = useState<CloudinaryImage | null>(null)
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false)
+  const [downloadingImage, setDownloadingImage] = useState<CloudinaryImage | null>(null)
   const imagesPerPage = 48 // Increased for full-screen view
 
   // Calculate pagination
@@ -164,15 +167,15 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                     aria-label={`View ${image.title} in full size`}
                   >
                     <div className={`relative ${getAspectRatioClass()}`}>
-                      <Image
+                      <ProgressiveImage
                         src={image.imageUrl}
                         alt={image.title}
                         fill
                         className="object-cover transition-all duration-500 hover:scale-105 hover:brightness-110 select-none"
                         sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
                         draggable={false}
-                        onContextMenu={(e) => e.preventDefault()}
-                        onDragStart={(e) => e.preventDefault()}
+                        onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
+                        onDragStart={(e: React.DragEvent) => e.preventDefault()}
                       />
                       
                       {/* Invisible protection overlay */}
@@ -261,49 +264,25 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
           {/* Modal Content */}
           <div className="flex flex-col items-center justify-center w-full h-full max-w-full max-h-full px-4 py-20 space-y-6">
             <div className="relative flex-shrink-0 max-w-full max-h-full flex items-center justify-center">
-              <Image
+              <ProgressiveImage
                 src={`https://res.cloudinary.com/dmko2zav7/image/upload/q_80,f_auto,w_1200/${selectedImage.publicId}`}
                 alt={selectedImage.title}
                 width={selectedImage.width}
                 height={selectedImage.height}
                 className="max-w-[90vw] max-h-[50vh] w-auto h-auto object-contain select-none rounded-lg shadow-2xl"
-                quality={85}
                 priority
                 draggable={false}
-                onContextMenu={(e) => e.preventDefault()}
-                onDragStart={(e) => e.preventDefault()}
+                onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
+                onDragStart={(e: React.DragEvent) => e.preventDefault()}
               />
             </div>
 
             {/* Download Button - Always Visible */}
             <div className="flex-shrink-0 w-full flex justify-center">
               <Button
-                onClick={async () => {
-                  try {
-                    const filename = `${selectedImage.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
-                    const downloadUrl = `/api/download?url=${encodeURIComponent(selectedImage.originalUrl)}&filename=${encodeURIComponent(filename)}`
-                    
-                    const link = document.createElement('a')
-                    link.href = downloadUrl
-                    link.download = filename
-                    link.rel = 'noopener noreferrer'
-                    
-                    document.body.appendChild(link)
-                    link.click()
-                    document.body.removeChild(link)
-                    
-                    setTimeout(() => {
-                      const showCreditDialog = Math.random() < 0.5
-                      if (showCreditDialog) {
-                        setShowCreditDialog(true)
-                      } else {
-                        setShowDonationDialog(true)
-                      }
-                    }, 1000)
-                  } catch (error) {
-                    console.error('Download failed:', error)
-                    alert('Download failed. Please try again.')
-                  }
+                onClick={() => {
+                  setDownloadingImage(selectedImage)
+                  setShowDownloadDialog(true)
                 }}
                 className="bg-gold hover:bg-gold/90 text-black font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg text-sm flex-shrink-0"
               >
@@ -328,6 +307,52 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
         onClose={() => setShowCreditDialog(false)}
         photoTitle={undefined}
       />
+
+      {/* Download Dialog with Hilarious Animations */}
+      {downloadingImage && (
+        <DownloadDialog
+          isOpen={showDownloadDialog}
+          onClose={() => {
+            setShowDownloadDialog(false)
+            setDownloadingImage(null)
+          }}
+          onDownloadComplete={async () => {
+            try {
+              const filename = `${downloadingImage.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
+              const downloadUrl = `/api/download?url=${encodeURIComponent(downloadingImage.originalUrl)}&filename=${encodeURIComponent(filename)}`
+              
+              const link = document.createElement('a')
+              link.href = downloadUrl
+              link.download = filename
+              link.rel = 'noopener noreferrer'
+              
+              document.body.appendChild(link)
+              link.click()
+              document.body.removeChild(link)
+              
+              // Close download dialog
+              setShowDownloadDialog(false)
+              setDownloadingImage(null)
+              
+              // Show appreciation dialog after download
+              setTimeout(() => {
+                const showCreditDialog = Math.random() < 0.5
+                if (showCreditDialog) {
+                  setShowCreditDialog(true)
+                } else {
+                  setShowDonationDialog(true)
+                }
+              }, 1000)
+            } catch (error) {
+              console.error('Download failed:', error)
+              alert('Download failed. Please try again.')
+              setShowDownloadDialog(false)
+              setDownloadingImage(null)
+            }
+          }}
+          imageName={downloadingImage.title}
+        />
+      )}
     </div>
   )
 }

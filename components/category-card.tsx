@@ -1,5 +1,5 @@
 import Link from "next/link"
-import Image from "next/image"
+import { ProgressiveImage } from "./progressive-image"
 
 interface CategoryCardProps {
   id: string
@@ -11,7 +11,7 @@ export function CategoryCard({ id, title, imageUrl }: CategoryCardProps) {
   return (
     <Link href={`/category/${id}`} className="group">
       <div className="relative overflow-hidden aspect-[4/3] transition-all duration-300 group-hover:shadow-lg border border-gray-800">
-        <Image
+        <ProgressiveImage
           src={imageUrl || "/placeholder.svg"}
           alt={title}
           fill
