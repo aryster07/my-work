@@ -7,6 +7,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 import AppreciationDialog from './appreciation-dialog'
+import CreditDialog from './credit-dialog'
 
 interface CloudinaryImage {
   id: number
@@ -31,6 +32,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [showDonationDialog, setShowDonationDialog] = useState(false)
+  const [showCreditDialog, setShowCreditDialog] = useState(false)
   const [selectedImage, setSelectedImage] = useState<CloudinaryImage | null>(null)
   const imagesPerPage = 36 // Increased for better UX with large galleries
 
@@ -298,9 +300,14 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                       link.click()
                       document.body.removeChild(link)
                       
-                      // Show appreciation dialog after download
+                      // Show random dialog after download (either appreciation or credit dialog)
                       setTimeout(() => {
-                        setShowDonationDialog(true)
+                        const showCreditDialog = Math.random() < 0.5 // 50% chance for each
+                        if (showCreditDialog) {
+                          setShowCreditDialog(true)
+                        } else {
+                          setShowDonationDialog(true)
+                        }
                       }, 1000)
                     } catch (error) {
                       console.error('Download failed:', error)
@@ -322,6 +329,13 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
       <AppreciationDialog
         isOpen={showDonationDialog}
         onClose={() => setShowDonationDialog(false)}
+        photoTitle={undefined}
+      />
+
+      {/* Credit Dialog */}
+      <CreditDialog
+        isOpen={showCreditDialog}
+        onClose={() => setShowCreditDialog(false)}
         photoTitle={undefined}
       />
     </>
