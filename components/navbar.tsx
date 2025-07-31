@@ -3,12 +3,15 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [currentHash, setCurrentHash] = useState("")
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +20,23 @@ export function Navbar() {
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  // Track hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash
+      setCurrentHash(hash)
+      console.log('Hash changed to:', hash) // Debug log
+    }
+    
+    // Set initial hash
+    const initialHash = window.location.hash
+    setCurrentHash(initialHash)
+    console.log('Initial hash:', initialHash) // Debug log
+    
+    window.addEventListener("hashchange", handleHashChange)
+    return () => window.removeEventListener("hashchange", handleHashChange)
   }, [])
 
   // Prevent body scroll when menu is open to avoid visual glitches
@@ -32,6 +52,37 @@ export function Navbar() {
       document.body.style.overflow = 'unset'
     }
   }, [isMenuOpen])
+
+  // Check if a link is active
+  const isActive = (path: string) => {
+    // For non-home pages (contact, support, etc.)
+    if (path.startsWith("/") && path !== "/" && !path.includes("#")) {
+      return pathname.startsWith(path)
+    }
+    
+    // For home page sections
+    if (pathname === "/") {
+      if (path === "/") {
+        // Home section - active when no hash or at top
+        return !currentHash || currentHash === "" || currentHash === "#"
+      }
+      if (path === "/#gallery") {
+        // Gallery section - active when hash is #gallery
+        return currentHash === "#gallery"
+      }
+      if (path === "/#about") {
+        // About section - active when hash is #about
+        return currentHash === "#about"
+      }
+    }
+    
+    // For gallery category pages
+    if (path === "/#gallery" && pathname.startsWith("/category/")) {
+      return true
+    }
+    
+    return false
+  }
 
   // Get navbar background class based on state
   const getNavbarClass = () => {
@@ -56,38 +107,68 @@ export function Navbar() {
             <nav className="flex items-center space-x-8">
               <Link
                 href="/"
-                className="text-sm font-medium text-white hover:text-gold transition-colors relative group"
+                className={`text-sm font-medium transition-colors relative group ${
+                  isActive("/") 
+                    ? "text-gold" 
+                    : "text-white hover:text-gold"
+                }`}
               >
                 Home{" "}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full" />
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-gold transition-all duration-300 ${
+                  isActive("/") ? "w-full" : "w-0 group-hover:w-full"
+                }`} />
               </Link>
               <Link
                 href="/#gallery"
-                className="text-sm font-medium text-white hover:text-gold transition-colors relative group"
+                className={`text-sm font-medium transition-colors relative group ${
+                  isActive("/#gallery") 
+                    ? "text-gold" 
+                    : "text-white hover:text-gold"
+                }`}
               >
                 Gallery{" "}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full" />
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-gold transition-all duration-300 ${
+                  isActive("/#gallery") ? "w-full" : "w-0 group-hover:w-full"
+                }`} />
               </Link>
               <Link
                 href="/#about"
-                className="text-sm font-medium text-white hover:text-gold transition-colors relative group"
+                className={`text-sm font-medium transition-colors relative group ${
+                  isActive("/#about") 
+                    ? "text-gold" 
+                    : "text-white hover:text-gold"
+                }`}
               >
                 About{" "}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full" />
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-gold transition-all duration-300 ${
+                  isActive("/#about") ? "w-full" : "w-0 group-hover:w-full"
+                }`} />
               </Link>
               <Link
                 href="/contact"
-                className="text-sm font-medium text-white hover:text-gold transition-colors relative group"
+                className={`text-sm font-medium transition-colors relative group ${
+                  isActive("/contact") 
+                    ? "text-gold" 
+                    : "text-white hover:text-gold"
+                }`}
               >
                 Contact Me{" "}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full" />
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-gold transition-all duration-300 ${
+                  isActive("/contact") ? "w-full" : "w-0 group-hover:w-full"
+                }`} />
               </Link>
               <Link
                 href="/support"
-                className="text-sm font-medium text-white hover:text-gold transition-colors relative group"
+                className={`text-sm font-medium transition-colors relative group ${
+                  isActive("/support") 
+                    ? "text-gold" 
+                    : "text-white hover:text-gold"
+                }`}
               >
                 Support{" "}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full" />
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-gold transition-all duration-300 ${
+                  isActive("/support") ? "w-full" : "w-0 group-hover:w-full"
+                }`} />
               </Link>
             </nav>
           </div>
@@ -126,35 +207,55 @@ export function Navbar() {
             <nav className="flex flex-col p-4 space-y-4 bg-black h-full overflow-y-auto">
               <Link 
                 href="/" 
-                className="text-lg font-medium text-white hover:text-gold transition-colors py-3 px-4 rounded-lg hover:bg-gray-800 block"
+                className={`text-lg font-medium transition-colors py-3 px-4 rounded-lg block ${
+                  isActive("/")
+                    ? "text-gold bg-gold/10 border border-gold/20"
+                    : "text-white hover:text-gold hover:bg-gray-800"
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
               </Link>
               <Link 
                 href="/#gallery" 
-                className="text-lg font-medium text-white hover:text-gold transition-colors py-3 px-4 rounded-lg hover:bg-gray-800 block"
+                className={`text-lg font-medium transition-colors py-3 px-4 rounded-lg block ${
+                  isActive("/#gallery")
+                    ? "text-gold bg-gold/10 border border-gold/20"
+                    : "text-white hover:text-gold hover:bg-gray-800"
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Gallery
               </Link>
               <Link 
                 href="/#about" 
-                className="text-lg font-medium text-white hover:text-gold transition-colors py-3 px-4 rounded-lg hover:bg-gray-800 block"
+                className={`text-lg font-medium transition-colors py-3 px-4 rounded-lg block ${
+                  isActive("/#about")
+                    ? "text-gold bg-gold/10 border border-gold/20"
+                    : "text-white hover:text-gold hover:bg-gray-800"
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
               </Link>
               <Link 
                 href="/contact" 
-                className="text-lg font-medium text-white hover:text-gold transition-colors py-3 px-4 rounded-lg hover:bg-gray-800 block"
+                className={`text-lg font-medium transition-colors py-3 px-4 rounded-lg block ${
+                  isActive("/contact")
+                    ? "text-gold bg-gold/10 border border-gold/20"
+                    : "text-white hover:text-gold hover:bg-gray-800"
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact Me
               </Link>
               <Link 
                 href="/support" 
-                className="text-lg font-medium text-white hover:text-gold transition-colors py-3 px-4 rounded-lg hover:bg-gray-800 block"
+                className={`text-lg font-medium transition-colors py-3 px-4 rounded-lg block ${
+                  isActive("/support")
+                    ? "text-gold bg-gold/10 border border-gold/20"
+                    : "text-white hover:text-gold hover:bg-gray-800"
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Support

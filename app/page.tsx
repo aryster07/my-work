@@ -186,12 +186,41 @@ export default function HomePage() {
                 I shoot everything, just not with a gun (Yet) 💀
               </p>
               
-              <Button asChild size="lg" className="rounded-xl bg-gold hover:bg-gold/90 text-black font-semibold border-0 px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-                <Link href="#gallery">
-                  Explore My Work
-                  <Camera className="ml-3 h-5 w-5" />
-                </Link>
-              </Button>
+              {/* Buttons Section */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button asChild size="lg" className="rounded-xl bg-gold hover:bg-gold/90 text-black font-semibold border-0 px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                  <Link href="#gallery">
+                    Explore My Work
+                    <Camera className="ml-3 h-5 w-5" />
+                  </Link>
+                </Button>
+                
+                {/* Support Me Section with Simple Roast - Mobile Only */}
+                <div className="flex flex-col items-center gap-2 sm:contents">
+                  <div className="block sm:hidden text-center">
+                    <p className="text-xs text-gray-400 italic">
+                      "Ever tried to help a poor? 🥺💸"
+                    </p>
+                  </div>
+                  
+                  <div className="relative group">
+                    <Button asChild size="lg" className="rounded-xl bg-transparent border-2 border-gold hover:bg-gold text-gold hover:text-black font-bold px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                      <Link href="/support">
+                        Support Me ❤️
+                      </Link>
+                    </Button>
+                    
+                    {/* Enhanced Hover Text for Desktop with better contrast */}
+                    <div className="hidden sm:block absolute -top-14 left-1/2 transform -translate-x-1/2 bg-black/90 text-white text-sm px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap shadow-xl border border-white/20 z-20">
+                      <div className="relative font-medium">
+                        Help keep this passion alive!
+                        {/* Arrow pointing down with better contrast */}
+                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black/90"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

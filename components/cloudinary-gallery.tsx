@@ -7,7 +7,6 @@ import { Download } from 'lucide-react'
 import AppreciationDialog from './appreciation-dialog'
 import CreditDialog from './credit-dialog'
 import { ProgressiveImage } from './progressive-image'
-import { DownloadDialog } from './download-dialog'
 
 interface CloudinaryImage {
   id: number
@@ -34,8 +33,6 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
   const [showDonationDialog, setShowDonationDialog] = useState(false)
   const [showCreditDialog, setShowCreditDialog] = useState(false)
   const [selectedImage, setSelectedImage] = useState<CloudinaryImage | null>(null)
-  const [showDownloadDialog, setShowDownloadDialog] = useState(false)
-  const [downloadingImage, setDownloadingImage] = useState<CloudinaryImage | null>(null)
   const imagesPerPage = 48 // Increased for full-screen view
 
   // Calculate pagination
@@ -121,30 +118,16 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
         </div>
       </div>
 
-      {/* Image Grid - Optimized for full-screen viewing */}
-      <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-6 xl:columns-8 gap-2 sm:gap-3 space-y-2 sm:space-y-3 px-2 sm:px-4">
+      {/* Masonry-Style Grid - Eliminates Blank Spaces */}
+      <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 xl:columns-6 2xl:columns-7 gap-1 sm:gap-2 md:gap-3 space-y-1 sm:space-y-2 md:space-y-3">
         {currentImages.map((image) => {
-          // Instagram-style aspect ratio logic
-          const getAspectRatioClass = () => {
-            if (image.isLandscape) {
-              // Landscape: Use 16:9 or similar wide format
-              return 'aspect-[16/9]'
-            } else if (image.aspectRatio < 0.8) {
-              // Portrait: Use Instagram's 4:5 ratio
-              return 'aspect-[4/5]'
-            } else {
-              // Square or near-square: Use 1:1
-              return 'aspect-square'
-            }
-          }
-
           return (
             <div 
               key={image.id} 
-              className="break-inside-avoid mb-3 sm:mb-4"
+              className="w-full break-inside-avoid mb-1 sm:mb-2 md:mb-3"
             >
               <Card className="overflow-hidden bg-gray-900 border-gray-700 hover:border-gold/50 transition-all duration-300">
-                {/* Image Section Only */}
+                {/* Image Section with Natural Aspect Ratio */}
                 <CardContent className="p-0 relative">
                   <button 
                     className="relative overflow-hidden cursor-pointer w-full h-full bg-transparent border-none p-0"
@@ -166,16 +149,19 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                     onDragStart={(e) => e.preventDefault()}
                     aria-label={`View ${image.title} in full size`}
                   >
-                    <div className={`relative ${getAspectRatioClass()}`}>
+                    {/* Natural aspect ratio for masonry layout */}
+                    <div className="relative w-full">
                       <ProgressiveImage
                         src={image.imageUrl}
                         alt={image.title}
-                        fill
-                        className="object-cover transition-all duration-500 hover:scale-105 hover:brightness-110 select-none"
-                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
+                        width={image.width}
+                        height={image.height}
+                        className="w-full h-auto object-cover transition-all duration-300 hover:scale-[1.02] hover:brightness-110 select-none rounded-sm"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, (max-width: 1536px) 16.66vw, 14.28vw"
                         draggable={false}
                         onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
                         onDragStart={(e: React.DragEvent) => e.preventDefault()}
+                        priority={false}
                       />
                       
                       {/* Invisible protection overlay */}
@@ -280,9 +266,48 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
             {/* Download Button - Always Visible */}
             <div className="flex-shrink-0 w-full flex justify-center">
               <Button
-                onClick={() => {
-                  setDownloadingImage(selectedImage)
-                  setShowDownloadDialog(true)
+                onClick={async () => {
+                  try {
+                    const filename = `${selectedImage.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
+                    const downloadUrl = `/api/download?url=${encodeURIComponent(selectedImage.originalUrl)}&filename=${encodeURIComponent(filename)}`
+                    
+                    // Use fetch and blob to force download
+                    const response = await fetch(downloadUrl)
+                    if (!response.ok) throw new Error('Download failed')
+                    
+                    const blob = await response.blob()
+                    const url = window.URL.createObjectURL(blob)
+                    
+                    // Create link with forced download
+                    const link = document.createElement('a')
+                    link.href = url
+                    link.download = filename
+                    link.style.display = 'none'
+                    
+                    // Force click without target blank
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                    
+                    // Clean up blob URL
+                    window.URL.revokeObjectURL(url)
+                    
+                    // Close modal
+                    setSelectedImage(null)
+                    
+                    // Show appreciation dialog after download
+                    setTimeout(() => {
+                      const showCreditDialog = Math.random() < 0.5
+                      if (showCreditDialog) {
+                        setShowCreditDialog(true)
+                      } else {
+                        setShowDonationDialog(true)
+                      }
+                    }, 1000)
+                  } catch (error) {
+                    console.error('Download failed:', error)
+                    alert('Download failed. Please try again.')
+                  }
                 }}
                 className="bg-gold hover:bg-gold/90 text-black font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg text-sm flex-shrink-0"
               >
@@ -307,52 +332,6 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
         onClose={() => setShowCreditDialog(false)}
         photoTitle={undefined}
       />
-
-      {/* Download Dialog with Hilarious Animations */}
-      {downloadingImage && (
-        <DownloadDialog
-          isOpen={showDownloadDialog}
-          onClose={() => {
-            setShowDownloadDialog(false)
-            setDownloadingImage(null)
-          }}
-          onDownloadComplete={async () => {
-            try {
-              const filename = `${downloadingImage.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
-              const downloadUrl = `/api/download?url=${encodeURIComponent(downloadingImage.originalUrl)}&filename=${encodeURIComponent(filename)}`
-              
-              const link = document.createElement('a')
-              link.href = downloadUrl
-              link.download = filename
-              link.rel = 'noopener noreferrer'
-              
-              document.body.appendChild(link)
-              link.click()
-              document.body.removeChild(link)
-              
-              // Close download dialog
-              setShowDownloadDialog(false)
-              setDownloadingImage(null)
-              
-              // Show appreciation dialog after download
-              setTimeout(() => {
-                const showCreditDialog = Math.random() < 0.5
-                if (showCreditDialog) {
-                  setShowCreditDialog(true)
-                } else {
-                  setShowDonationDialog(true)
-                }
-              }, 1000)
-            } catch (error) {
-              console.error('Download failed:', error)
-              alert('Download failed. Please try again.')
-              setShowDownloadDialog(false)
-              setDownloadingImage(null)
-            }
-          }}
-          imageName={downloadingImage.title}
-        />
-      )}
     </div>
   )
 }

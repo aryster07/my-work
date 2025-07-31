@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   description: "Photography portfolio showcasing the work of 7Frames_aryan",
   generator: 'v0.dev',
   manifest: '/manifest.json',
+  viewport: 'width=device-width, initial-scale=1',
   icons: {
     icon: [
       { url: '/images/Dp.jpg', sizes: '16x16', type: 'image/jpeg' },

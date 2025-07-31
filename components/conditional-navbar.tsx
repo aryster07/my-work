@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation"
 import { Navbar } from "./navbar"
 import { GalleryNavbar } from "./gallery-navbar"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 // Mapping of URL-friendly IDs to category titles
 const categoryTitles: { [key: string]: string } = {
@@ -23,6 +24,7 @@ const categoryTitles: { [key: string]: string } = {
 
 export function ConditionalNavbar() {
   const pathname = usePathname()
+  const isMobile = useIsMobile()
 
   // Check if we're in a gallery-related page
   const isCategoryPage = pathname.startsWith('/category/')
@@ -32,19 +34,23 @@ export function ConditionalNavbar() {
   const isSupportPage = pathname.startsWith('/support')
   
   if (isCategoryPage) {
-    // Extract category ID from pathname (e.g., /category/astro -> astro)
-    const categoryId = pathname.split('/')[2]
-    const categoryTitle = categoryTitles[categoryId] || categoryId
+    // For category pages, show regular navbar on desktop, gallery navbar on mobile
+    if (isMobile) {
+      // Extract category ID from pathname (e.g., /category/astro -> astro)
+      const categoryId = pathname.split('/')[2]
+      const categoryTitle = categoryTitles[categoryId] || categoryId
 
-    return (
-      <GalleryNavbar 
-        categoryTitle={categoryTitle}
-        showBackButton={true}
-        backLink="/#gallery"
-        backText="Back to Gallery"
-        showFullscreenButton={false}
-      />
-    )
+      return (
+        <GalleryNavbar 
+          categoryTitle={categoryTitle}
+          showBackButton={true}
+          backLink="/#gallery"
+          backText="Back to Gallery"
+          showFullscreenButton={false}
+        />
+      )
+    }
+    return <Navbar />
   }
 
   if (isPhotoPage) {
@@ -74,29 +80,35 @@ export function ConditionalNavbar() {
   }
 
   if (isContactPage) {
-    // For contact page
-    return (
-      <GalleryNavbar 
-        categoryTitle="Contact"
-        showBackButton={true}
-        backLink="/"
-        backText="Back to Home"
-        showFullscreenButton={false}
-      />
-    )
+    // For contact page - use GalleryNavbar only on mobile, regular Navbar on desktop
+    if (isMobile) {
+      return (
+        <GalleryNavbar 
+          categoryTitle="Contact"
+          showBackButton={true}
+          backLink="/"
+          backText="Back to Home"
+          showFullscreenButton={false}
+        />
+      )
+    }
+    return <Navbar />
   }
 
   if (isSupportPage) {
-    // For support page
-    return (
-      <GalleryNavbar 
-        categoryTitle="Support"
-        showBackButton={true}
-        backLink="/"
-        backText="Back to Home"
-        showFullscreenButton={false}
-      />
-    )
+    // For support page - use GalleryNavbar only on mobile, regular Navbar on desktop
+    if (isMobile) {
+      return (
+        <GalleryNavbar 
+          categoryTitle="Support"
+          showBackButton={true}
+          backLink="/"
+          backText="Back to Home"
+          showFullscreenButton={false}
+        />
+      )
+    }
+    return <Navbar />
   }
 
   // For all other pages (home, about, etc.), show default navbar

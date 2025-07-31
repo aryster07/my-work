@@ -49,7 +49,7 @@ export function ProgressiveImage({
     <div className="relative w-full h-full">
       {/* Loading Animation - shown until image loads */}
       {!isImageLoaded && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center">
+        <div className="absolute inset-0 z-40 flex items-center justify-center">
           <div className="text-center">
             <div className="relative mb-3">
               {loader.icon}
