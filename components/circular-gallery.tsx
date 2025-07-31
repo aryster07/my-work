@@ -271,12 +271,18 @@ class Media {
             },
             transparent: true,
         });
+        
+        // Fast low-quality image loading
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.src = this.image;
+        
+        // Set immediate dimensions for faster layout
+        this.program.uniforms.uImageSizes.value = [300, 300];
+        
         img.onload = () => {
             texture.image = img;
-            this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
+            // Keep the predefined dimensions for consistency
         };
     }
 
@@ -455,8 +461,8 @@ class App {
 
     createGeometry() {
         this.planeGeometry = new Plane(this.gl, {
-            heightSegments: 50,
-            widthSegments: 100,
+            heightSegments: 15,
+            widthSegments: 25,
         });
     }
 
@@ -469,55 +475,119 @@ class App {
     ) {
         const defaultItems = [
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/103-IMG_0106_addfsq",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/103-IMG_0106_addfsq",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/11-DSC00926_ps9xyf", 
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/11-DSC00926_ps9xyf", 
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/11-DSC01061_bgyv56",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/11-DSC01061_bgyv56",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/113-_DSC0041_hmyzd7",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/113-_DSC0041_hmyzd7",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/15-DSC01450_c6eywj",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/15-DSC01450_c6eywj",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/15-IMG_3058_pdrthm",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/15-IMG_3058_pdrthm",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/17-DSC00499_vlwkc1",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/17-DSC00499_vlwkc1",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/19-DSC01967_jzc7cs",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/19-DSC01967_jzc7cs",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/19-DSC02692_tkt3fu",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/19-DSC02692_tkt3fu",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/2-DSC03201_rwysnx",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/2-DSC03201_rwysnx",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/25-IMG_0114_rgsq9p",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/25-IMG_0114_rgsq9p",
                 text: "",
             },
             {
-                image: "https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/26-IMG_0107_kahuhv",
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/26-IMG_0107_kahuhv",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/30-PXL_20250429_082224631_m9jjww",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/33-IMG_6520_hbfgae",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/4-DSC00397_edj9dn",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/52-DSC08666_y9jhbs",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/52-DSC09411_gaw6g1",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/59-DSC09268_pnicy8",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/6-DSC02733_h0ng7e",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/6-DSC08799_u2bie5",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/6-IMG_8037_jpg_er7hzt",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/62-PXL_20240703_061754422_hfhfkp",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/76-IMG_0398_wtu3tn",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/8-DSC00993_gz2ius",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/9-DSC00572_bvghfo",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/9-DSC03393_snkunt",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/97-DSC00912_wh0t5f",
+                text: "",
+            },
+            {
+                image: "https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,q_30,f_webp/DSC00011_c7piko",
                 text: "",
             },
         ];
-        const galleryItems = items && items.length ? items : defaultItems;
+        const galleryItems = items?.length ? items : defaultItems;
         this.mediasImages = galleryItems.concat(galleryItems);
         this.medias = this.mediasImages.map((data, index) => {
             return new Media({
@@ -590,7 +660,7 @@ class App {
     destroy() {
         window.cancelAnimationFrame(this.raf);
         window.removeEventListener("resize", this.boundOnResize);
-        if (this.renderer && this.renderer.gl && this.renderer.gl.canvas.parentNode) {
+        if (this.renderer?.gl?.canvas?.parentNode) {
             this.renderer.gl.canvas.parentNode.removeChild(this.renderer.gl.canvas as HTMLCanvasElement);
         }
     }
@@ -655,12 +725,16 @@ export default function CircularGallery({
     
     return (
         <div 
-            className="w-full h-full overflow-hidden" 
+            className="w-full h-full overflow-hidden select-none" 
             ref={containerRef}
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
             style={{ 
                 // Ensure hardware acceleration for smoother performance
                 transform: 'translateZ(0)',
-                willChange: 'transform'
+                willChange: 'transform',
+                WebkitUserSelect: 'none',
+                WebkitTouchCallout: 'none'
             }}
         />
     );

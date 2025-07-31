@@ -106,33 +106,13 @@ export default function AppreciationDialog({ isOpen, onClose, photoTitle }: Appr
           {/* Optional Donation Section */}
           <div className="border-t pt-6">
             <p className="text-center text-gray-600 text-sm mb-4">
-              Want to go the extra mile? ✨
+              Support my work 💝
             </p>
             
-            {/* Donation Amounts */}
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              {[50, 100, 200].map((amount) => (
-                <button
-                  key={amount}
-                  onClick={() => {
-                    setSelectedAmount(amount)
-                    setCustomAmount('')
-                  }}
-                  className={`py-2 px-3 rounded-lg border text-sm font-medium transition-colors ${
-                    selectedAmount === amount
-                      ? 'bg-yellow-400 border-yellow-400 text-black'
-                      : 'border-gray-300 hover:border-yellow-400 hover:bg-yellow-50'
-                  }`}
-                >
-                  ₹{amount}
-                </button>
-              ))}
-            </div>
-
             {/* Custom Amount */}
             <input
               type="number"
-              placeholder="Custom amount (₹)"
+              placeholder="Enter amount (₹)"
               value={customAmount}
               onChange={(e) => {
                 setCustomAmount(e.target.value)
@@ -144,7 +124,7 @@ export default function AppreciationDialog({ isOpen, onClose, photoTitle }: Appr
             {/* Donate Button */}
             <button
               onClick={handleDonate}
-              disabled={!selectedAmount && !customAmount}
+              disabled={!customAmount}
               className="w-full py-3 px-4 bg-yellow-400 text-black rounded-lg font-semibold hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-3"
             >
               Donate Now

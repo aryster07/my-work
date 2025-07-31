@@ -43,11 +43,19 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
   useEffect(() => {
     async function fetchImages() {
       try {
+        console.log(`🔄 Fetching images for folder: ${folderName}`);
         const response = await fetch(`/api/images?folder=${encodeURIComponent(folderName)}`)
         const data = await response.json()
+        console.log(`📊 Gallery API response for ${folderName}:`, data);
+        console.log(`🖼️ Number of images found: ${data.images?.length || 0}`);
+        
+        if (data.error) {
+          console.error(`❌ API Error for ${folderName}:`, data.error);
+        }
+        
         setImages(data.images || [])
       } catch (error) {
-        console.error('Error fetching images:', error)
+        console.error('❌ Error fetching images:', error)
       } finally {
         setLoading(false)
       }
@@ -84,9 +92,18 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
       <div className="text-center py-20">
         <div className="text-6xl mb-4">📸</div>
         <h3 className="text-2xl font-semibold text-white mb-2">No Images Found</h3>
-        <p className="text-gray-400">
+        <p className="text-gray-400 mb-4">
           No images were found in the "{folderName}" folder on Cloudinary.
         </p>
+        <div className="text-sm text-gray-500">
+          <p>Possible reasons:</p>
+          <ul className="mt-2 space-y-1">
+            <li>• Folder name might be different in Cloudinary</li>
+            <li>• Images might be in a subfolder</li>
+            <li>• Cloudinary API rate limit reached</li>
+          </ul>
+          <p className="mt-4 text-xs">Check browser console for detailed error logs.</p>
+        </div>
       </div>
     )
   }
@@ -148,6 +165,8 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                         setSelectedImage(image)
                       }
                     }}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onDragStart={(e) => e.preventDefault()}
                     aria-label={`View ${image.title} in full size`}
                   >
                     <div className={`relative ${getAspectRatioClass()}`}>
@@ -155,14 +174,34 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                         src={image.imageUrl}
                         alt={image.title}
                         fill
-                        className="object-cover transition-all duration-500 hover:scale-105 hover:brightness-110"
+                        className="object-cover transition-all duration-500 hover:scale-105 hover:brightness-110 select-none"
                         sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
+                        draggable={false}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onDragStart={(e) => e.preventDefault()}
                       />
                       
-                      {/* Always visible glassy download icon on image */}
-                      <div className="absolute bottom-2 right-2 bg-black/30 backdrop-blur-md border border-white/20 rounded-full p-2 shadow-lg">
+                      {/* Invisible protection overlay */}
+                      <div 
+                        className="absolute inset-0 z-10 pointer-events-none select-none"
+                        onContextMenu={(e) => e.preventDefault()}
+                        onDragStart={(e) => e.preventDefault()}
+                      />
+                      
+                      {/* Always visible glassy download icon on image - opens preview */}
+                      <button
+                        className="absolute bottom-2 right-2 bg-black/30 backdrop-blur-md border border-white/20 rounded-full p-2 shadow-lg hover:bg-black/50 transition-colors z-20"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          // Open image in modal popup (same as clicking the image)
+                          setSelectedImage(image)
+                        }}
+                        onContextMenu={(e) => e.preventDefault()}
+                        aria-label={`Preview and download ${image.title}`}
+                      >
                         <Download className="w-4 h-4 text-white" />
-                      </div>
+                      </button>
                     </div>
                   </button>
                 </CardContent>
@@ -215,7 +254,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
 
       {/* Image Modal Popup */}
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-7xl w-[98vw] h-[98vh] md:w-[95vw] md:h-[95vh] p-0 bg-black/95 border-gray-800">
+        <DialogContent className="max-w-7xl w-[calc(100vw-1rem)] h-[calc(100vh-1rem)] md:w-[95vw] md:h-[95vh] p-0 bg-black/95 border-gray-800 m-2 max-h-[calc(100vh-1rem)]">
           {selectedImage && (
             <div className="relative w-full h-full flex flex-col">
               {/* Image container */}
@@ -226,21 +265,33 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                     alt={selectedImage.title}
                     width={selectedImage.width}
                     height={selectedImage.height}
-                    className="max-w-full max-h-[70vh] md:max-h-[75vh] w-auto h-auto object-contain"
+                    className="max-w-full max-h-[70vh] md:max-h-[75vh] w-auto h-auto object-contain select-none"
                     quality={85}
                     priority
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onDragStart={(e) => e.preventDefault()}
+                  />
+                  
+                  {/* Invisible protection overlay for modal image */}
+                  <div 
+                    className="absolute inset-0 pointer-events-none select-none"
+                    onContextMenu={(e) => e.preventDefault()}
                   />
                 </div>
 
                 {/* Download button under the image */}
                 <Button
-                  onClick={() => {
-                    // Enhanced download logic
+                  onClick={async () => {
                     try {
+                      // Use our secure download API instead of direct Cloudinary URL
+                      const filename = `${selectedImage.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
+                      const downloadUrl = `/api/download?url=${encodeURIComponent(selectedImage.originalUrl)}&filename=${encodeURIComponent(filename)}`
+                      
+                      // Create and trigger download link
                       const link = document.createElement('a')
-                      link.href = selectedImage.originalUrl
-                      link.download = `${selectedImage.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
-                      link.target = '_blank'
+                      link.href = downloadUrl
+                      link.download = filename
                       link.rel = 'noopener noreferrer'
                       
                       document.body.appendChild(link)
@@ -253,8 +304,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                       }, 1000)
                     } catch (error) {
                       console.error('Download failed:', error)
-                      // Fallback: open in new tab
-                      window.open(selectedImage.originalUrl, '_blank')
+                      alert('Download failed. Please try again.')
                     }
                   }}
                   className="bg-gold hover:bg-gold/90 text-black font-semibold px-6 py-3 md:px-8 md:py-3 rounded-lg transition-colors touch-manipulation"

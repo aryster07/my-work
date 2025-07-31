@@ -107,7 +107,7 @@ export function DonationDialog({
       </button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-md mx-auto p-0 overflow-hidden">
+        <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-md w-[calc(100vw-2rem)] mx-auto m-4 p-0 overflow-hidden max-h-[calc(100vh-2rem)]">
           <div className="relative p-6">
             {/* Header with sarcastic touch */}
             <DialogHeader className="text-center mb-6">

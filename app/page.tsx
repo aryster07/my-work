@@ -12,9 +12,13 @@ import { CloudinaryThumbnail } from "@/components/cloudinary-thumbnail"
 interface CarouselImage {
   publicId: string
   url: string
+  previewUrl: string
   originalUrl: string
+  thumbnailUrl: string
   width: number
   height: number
+  title: string
+  alt: string
 }
 
 const categories = [
@@ -100,21 +104,20 @@ const categories = [
 
 export default function HomePage() {
   const [carouselItems, setCarouselItems] = useState<{ image: string; text: string }[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     // Fetch carousel images
     const fetchCarouselImages = async () => {
       try {
+        setIsLoading(true)
         const response = await fetch('/api/carousel')
         const data = await response.json()
         
         if (data.images && data.images.length > 0) {
-          // Shuffle images for random display
-          const shuffled = [...data.images].sort(() => Math.random() - 0.5)
-          
-          // Convert to carousel format
-          const items = shuffled.map((img: CarouselImage) => ({
-            image: img.url,
+          // Use optimized URLs instead of shuffling for consistent performance
+          const items = data.images.map((img: CarouselImage) => ({
+            image: img.url, // Already optimized in cloudinary.ts
             text: "" // No text as requested
           }))
           
@@ -122,6 +125,8 @@ export default function HomePage() {
         }
       } catch (error) {
         console.error('Error fetching carousel images:', error)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -193,17 +198,14 @@ export default function HomePage() {
             <div className="absolute bottom-36 left-24 w-1 h-1 bg-gold/30 rounded-full animate-pulse opacity-35 delay-1000"></div>
             <div className="absolute top-52 left-48 w-1 h-1 bg-gold/30 rounded-full animate-pulse opacity-30 delay-2000"></div>
 
-            {/* Speed Lines Effect */}
+            {/* Speed Lines Effect - Optimized */}
             <div className="speed-lines">
-              {Array.from({ length: 20 }, (_, i) => {
-                const uniqueId = `speed-line-${Math.random().toString(36).substring(2, 11)}-${i}`;
-                return (
-                  <div
-                    key={uniqueId}
-                    className="speed-line"
-                  />
-                );
-              })}
+              {Array.from({ length: 12 }, (_, i) => (
+                <div
+                  key={`speed-line-${i}`}
+                  className="speed-line"
+                />
+              ))}
             </div>
           </div>
 
@@ -212,14 +214,20 @@ export default function HomePage() {
             
             {/* Free-flowing Curved Gallery - Above Text */}
             <div className="w-screen h-64 md:h-80 lg:h-96 -mx-4">
-              <CircularGallery
-                items={carouselItems.length > 0 ? carouselItems : undefined}
-                bend={3}
-                textColor="#FFFFFF"
-                borderRadius={0.08}
-                scrollEase={0.15}
-                autoScrollSpeed={0.12}
-              />
+              {isLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <CircularGallery
+                  items={carouselItems.length > 0 ? carouselItems : undefined}
+                  bend={3}
+                  textColor="#FFFFFF"
+                  borderRadius={0.08}
+                  scrollEase={0.15}
+                  autoScrollSpeed={0.12}
+                />
+              )}
             </div>
 
             {/* Hero Text Content - Below Carousel */}
@@ -230,6 +238,7 @@ export default function HomePage() {
               <p className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
                 I shoot everything, just not with a gun (Yet) 💀
               </p>
+              
               <Button asChild size="lg" className="rounded-xl bg-gold hover:bg-gold/90 text-black font-semibold border-0 px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 <Link href="#gallery">
                   Explore My Work

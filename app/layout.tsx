@@ -5,6 +5,7 @@ import "./globals.css"
 
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { ImageProtection } from "@/components/image-protection"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white min-h-screen`}>
+        <ImageProtection />
         <Navbar />
         {children}
         <Footer />

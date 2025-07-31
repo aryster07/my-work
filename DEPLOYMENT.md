@@ -7,6 +7,19 @@
 - Vercel account (free)
 - Cloudinary account
 
+### 🔒 Image Protection Features
+
+This portfolio includes **comprehensive image protection** to prevent unauthorized downloading:
+- Right-click protection
+- Keyboard shortcut blocking
+- Developer tools detection
+- Mobile long-press protection
+- Invisible image overlays
+- Context menu blocking
+- Print protection
+
+See `IMAGE_PROTECTION.md` for full details.
+
 ### Step 1: Push to GitHub
 ```bash
 # Initialize git repository (if not already done)
@@ -16,7 +29,7 @@ git init
 git add .
 
 # Commit the changes
-git commit -m "Initial portfolio deployment"
+git commit -m "Portfolio with comprehensive image protection - ready for deployment"
 
 # Add remote repository (replace with your GitHub repo URL)
 git remote add origin https://github.com/aryster07/portfolio.git

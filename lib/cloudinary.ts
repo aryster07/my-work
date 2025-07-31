@@ -5,6 +5,7 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dmko2zav7',
   api_key: process.env.CLOUDINARY_API_KEY || '195252934725612',
   api_secret: process.env.CLOUDINARY_API_SECRET || '2k2jRQyebgpcKsClcImkS8F9K0Y',
+  secure: true,
 });
 
 export { cloudinary };
@@ -56,13 +57,43 @@ export const getOptimizedImageUrl = (publicId: string, options: {
 // Function to get folder contents with smart cropping
 export async function getFolderImages(folderName: string) {
   try {
-    // Escape folder names with spaces
-    const escapedFolderName = folderName.replace(/\s/g, '\\ ');
+    console.log(`🔍 Searching for folder: ${folderName}`);
     
-    const result = await cloudinary.search
-      .expression(`folder:portfolio_uploads/${escapedFolderName}`)
-      .max_results(500) // Increased to get all images (Cloudinary max is 500 per call)
-      .execute();
+    // Try multiple folder search patterns
+    const searchPatterns = [
+      `folder:portfolio_uploads/${folderName}`,   // Under portfolio_uploads folder (primary)
+      `folder:portfolio_uploads/${folderName.toLowerCase()}`, // Under portfolio_uploads folder (lowercase)
+      `folder:portfolio_uploads/${folderName.charAt(0).toUpperCase() + folderName.slice(1).toLowerCase()}`, // Under portfolio_uploads folder (title case)
+      `folder:"portfolio_uploads/${folderName}"`, // Quoted under portfolio_uploads folder
+      `folder:portfolio/${folderName}`,           // Under portfolio folder (fallback)
+      `folder:${folderName}`,                     // Direct folder name (fallback)
+    ];
+    
+    let result = null;
+    
+    // Try each search pattern until we find images
+    for (const pattern of searchPatterns) {
+      try {
+        console.log(`  Trying pattern: ${pattern}`);
+        result = await cloudinary.search
+          .expression(pattern)
+          .max_results(500)
+          .execute();
+        
+        if (result.resources.length > 0) {
+          console.log(`  ✅ Found ${result.resources.length} images with pattern: ${pattern}`);
+          break;
+        }
+      } catch (patternError) {
+        console.log(`  ❌ Pattern failed: ${pattern}`);
+        continue;
+      }
+    }
+    
+    if (!result || result.resources.length === 0) {
+      console.log(`❌ No images found for folder: ${folderName}`);
+      return [];
+    }
     
     return result.resources.map((resource: any, index: number) => {
       const aspectRatio = resource.width / resource.height;
@@ -88,8 +119,14 @@ export async function getFolderImages(folderName: string) {
         displayAspectRatio: isLandscape ? 1.91 : 0.8, // 1.91:1 for landscape, 4:5 for portrait
       };
     });
-  } catch (error) {
-    console.error(`Error fetching images from ${folderName}:`, error);
+  } catch (error: any) {
+    console.error(`❌ Error fetching images from ${folderName}:`, error);
+    
+    // Log the specific error for debugging
+    if (error?.error?.http_code === 420) {
+      console.log('⏳ Rate limit reached. Please try again later.');
+    }
+    
     return [];
   }
 }
@@ -97,15 +134,39 @@ export async function getFolderImages(folderName: string) {
 // Function to get the first image from a folder as thumbnail with smart cropping
 export async function getFolderThumbnail(folderName: string) {
   try {
-    // Escape folder names with spaces
-    const escapedFolderName = folderName.replace(/\s/g, '\\ ');
+    console.log(`🔍 Searching for thumbnail in folder: ${folderName}`);
     
-    const result = await cloudinary.search
-      .expression(`folder:portfolio_uploads/${escapedFolderName}`)
-      .max_results(1)
-      .execute();
+    // Try multiple folder search patterns (same as getFolderImages)
+    const searchPatterns = [
+      `folder:portfolio_uploads/${folderName}`,   // Under portfolio_uploads folder (primary)
+      `folder:portfolio_uploads/${folderName.toLowerCase()}`, // Under portfolio_uploads folder (lowercase)
+      `folder:portfolio_uploads/${folderName.charAt(0).toUpperCase() + folderName.slice(1).toLowerCase()}`, // Under portfolio_uploads folder (title case)
+      `folder:"portfolio_uploads/${folderName}"`, // Quoted under portfolio_uploads folder
+      `folder:portfolio/${folderName}`,           // Under portfolio folder (fallback)
+      `folder:${folderName}`,                     // Direct folder name (fallback)
+    ];
     
-    if (result.resources.length > 0) {
+    let result = null;
+    
+    // Try each search pattern until we find images
+    for (const pattern of searchPatterns) {
+      try {
+        result = await cloudinary.search
+          .expression(pattern)
+          .max_results(1)
+          .execute();
+        
+        if (result.resources.length > 0) {
+          console.log(`  ✅ Found thumbnail with pattern: ${pattern}`);
+          break;
+        }
+      } catch (patternError) {
+        console.log(`  ❌ Thumbnail pattern failed: ${pattern}`);
+        continue;
+      }
+    }
+    
+    if (result && result.resources.length > 0) {
       const resource = result.resources[0];
       const aspectRatio = resource.width / resource.height;
       
@@ -123,8 +184,14 @@ export async function getFolderThumbnail(folderName: string) {
     }
     
     return null;
-  } catch (error) {
-    console.error(`Error fetching thumbnail for ${folderName}:`, error);
+  } catch (error: any) {
+    console.error(`❌ Error fetching thumbnail for ${folderName}:`, error);
+    
+    // Log the specific error for debugging
+    if (error?.error?.http_code === 420) {
+      console.log('⏳ Rate limit reached for thumbnail. Please try again later.');
+    }
+    
     return null;
   }
 }
@@ -164,14 +231,21 @@ export const getCarouselImages = async () => {
       'DSC00011_c7piko'
     ];
     
-    // Create the carousel images array with correct URLs
-    const carouselImages = carouselImageIds.map((publicId) => ({
+    // Create the carousel images array with optimized URLs for performance
+    const carouselImages = carouselImageIds.map((publicId, index) => ({
       publicId: publicId,
-      // Use original image without cropping - just optimize quality and format
-      url: `https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/${publicId}`,
+      // Optimized low-res for circular carousel (300px, quality 60, smart crop)
+      url: `https://res.cloudinary.com/dmko2zav7/image/upload/w_300,h_300,c_fill,g_auto,q_60,f_auto/${publicId}`,
+      // Medium resolution for preview/modal (800px, quality 80)
+      previewUrl: `https://res.cloudinary.com/dmko2zav7/image/upload/w_800,q_80,f_auto,c_fill,g_auto/${publicId}`,
+      // Original high quality URL for full view
       originalUrl: `https://res.cloudinary.com/dmko2zav7/image/upload/q_auto,f_auto/${publicId}`,
-      width: 3000, // Default width, will be overridden by actual dimensions
-      height: 5000, // Default height, will be overridden by actual dimensions
+      // Thumbnail for fast loading (150px, quality 50)
+      thumbnailUrl: `https://res.cloudinary.com/dmko2zav7/image/upload/w_150,h_150,c_fill,g_auto,q_50,f_auto/${publicId}`,
+      width: 300,
+      height: 300,
+      title: `Portfolio Image ${index + 1}`,
+      alt: `Portfolio carousel image ${index + 1}`,
     }));
     
     return carouselImages;
