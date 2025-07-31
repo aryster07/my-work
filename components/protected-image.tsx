@@ -43,7 +43,7 @@ export function ProtectedImage({ src, alt, className = '', children }: Protected
           WebkitUserSelect: 'none'
         }}
       >
-        © 7frames_aryan
+        © 7Frames_aryan
       </div>
       
       {children}

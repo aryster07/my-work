@@ -29,7 +29,7 @@ export function AboutSection() {
 
             <div className="flex space-x-4">
               <Link
-                href="https://www.instagram.com/7frames_aryan/"
+                href="https://www.instagram.com/7Frames_aryan/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#111] p-3 rounded-full text-white hover:bg-gold hover:text-black transition-colors"

@@ -10,8 +10,8 @@ import { ImageProtection } from "@/components/image-protection"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "7frames_aryan | Photography Portfolio",
-  description: "Photography portfolio showcasing the work of 7frames_aryan",
+  title: "7Frames_aryan | Photography Portfolio",
+  description: "Photography portfolio showcasing the work of 7Frames_aryan",
     generator: 'v0.dev'
 }
 

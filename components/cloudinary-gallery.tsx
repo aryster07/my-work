@@ -190,7 +190,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                       
                       {/* Always visible glassy download icon on image - opens preview */}
                       <button
-                        className="absolute bottom-2 right-2 bg-black/30 backdrop-blur-md border border-white/20 rounded-full p-2 shadow-lg hover:bg-black/50 transition-colors z-20"
+                        className="absolute bottom-2 right-2 bg-black/30 backdrop-blur-md border border-white/20 rounded-full p-2.5 shadow-lg hover:bg-black/50 transition-colors z-20 flex items-center justify-center w-10 h-10"
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
@@ -254,18 +254,18 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
 
       {/* Image Modal Popup */}
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-7xl w-[calc(100vw-1rem)] h-[calc(100vh-1rem)] md:w-[95vw] md:h-[95vh] p-0 bg-black/95 border-gray-800 m-2 max-h-[calc(100vh-1rem)]">
+        <DialogContent className="max-w-6xl w-[calc(100vw-2rem)] h-[calc(100vh-2rem)] md:w-[90vw] md:h-[90vh] p-0 bg-black/95 border-gray-800">
           {selectedImage && (
-            <div className="relative w-full h-full flex flex-col">
+            <div className="relative w-full h-full flex flex-col items-center justify-center">
               {/* Image container */}
-              <div className="flex-1 flex flex-col items-center justify-center p-2 md:p-4">
-                <div className="relative max-w-full max-h-full mb-4 md:mb-6">
+              <div className="flex-1 flex items-center justify-center p-4 md:p-6">
+                <div className="relative">
                   <Image
                     src={`https://res.cloudinary.com/dmko2zav7/image/upload/q_80,f_auto,w_1200/${selectedImage.publicId}`}
                     alt={selectedImage.title}
                     width={selectedImage.width}
                     height={selectedImage.height}
-                    className="max-w-full max-h-[70vh] md:max-h-[75vh] w-auto h-auto object-contain select-none"
+                    className="max-w-full max-h-[65vh] md:max-h-[70vh] w-auto h-auto object-contain select-none"
                     quality={85}
                     priority
                     draggable={false}
@@ -307,7 +307,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                       alert('Download failed. Please try again.')
                     }
                   }}
-                  className="bg-gold hover:bg-gold/90 text-black font-semibold px-6 py-3 md:px-8 md:py-3 rounded-lg transition-colors touch-manipulation"
+                  className="bg-gold hover:bg-gold/90 text-black font-semibold px-8 py-3 rounded-lg transition-colors mb-4"
                 >
                   <Download className="w-5 h-5 mr-2" />
                   Download Image

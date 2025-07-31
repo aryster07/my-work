@@ -8,7 +8,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
             <Link href="/" className="font-bold text-xl text-white">
-              7frames_aryan
+              7Frames_aryan
             </Link>
             <p className="mt-2 text-sm text-gray-400 max-w-md">
               Capturing moments and preserving memories through the art of photography.
@@ -26,7 +26,7 @@ export function Footer() {
           <div className="flex flex-col items-center md:items-end">
             <div className="flex space-x-4 mb-4">
               <Link
-                href="https://www.instagram.com/7frames_aryan/"
+                href="https://www.instagram.com/7Frames_aryan/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#111] p-2 text-white hover:bg-gold hover:text-black transition-colors"
@@ -68,7 +68,7 @@ export function Footer() {
                 <span className="sr-only">LinkedIn</span>
               </Link>
             </div>
-            <p className="text-sm text-gray-500">© {new Date().getFullYear()} 7frames_aryan. All rights reserved.</p>
+            <p className="text-sm text-gray-500">© {new Date().getFullYear()} 7Frames_aryan. All rights reserved.</p>
           </div>
         </div>
       </div>

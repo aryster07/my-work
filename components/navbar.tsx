@@ -50,7 +50,7 @@ export function Navbar() {
           {/* Desktop Layout */}
           <div className="hidden md:flex items-center justify-between w-full">
             <Link href="/" className="flex items-center space-x-2">
-              <span className="font-bold text-xl text-white">7frames_aryan</span>
+              <span className="font-bold text-xl text-white">7Frames_aryan</span>
             </Link>
 
             <nav className="flex items-center space-x-8">
@@ -95,7 +95,7 @@ export function Navbar() {
           {/* Mobile Layout - brand on left, menu on right */}
           <div className="md:hidden flex items-center justify-between w-full">
             <Link href="/" className="flex items-center space-x-2">
-              <span className="font-bold text-xl text-white">7frames_aryan</span>
+              <span className="font-bold text-xl text-white">7Frames_aryan</span>
             </Link>
             <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(true)}>
               <Menu className="h-6 w-6 text-white" />

@@ -101,12 +101,12 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-bold text-white">MESSAGE ME ON INSTAGRAM</h3>
                     <a 
-                      href="https://www.instagram.com/7frames_aryan/" 
+                      href="https://www.instagram.com/7Frames_aryan/" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-gold hover:text-gold/80 transition-colors"
                     >
-                      @7frames_aryan
+                      @7Frames_aryan
                     </a>
                     <p className="text-sm text-gray-500 mt-1">Quick responses and portfolio updates</p>
                   </div>

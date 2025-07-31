@@ -39,7 +39,7 @@ export function DonationButton() {
   const mainUpiId = "aryanrana762-1@oksbi"
   
   const generateUPILink = (amount: string) => {
-    return `upi://pay?pa=${mainUpiId}&pn=7frames_aryan&am=${amount}&cu=INR&tn=Photography%20Support%20Donation`
+    return `upi://pay?pa=${mainUpiId}&pn=7Frames_aryan&am=${amount}&cu=INR&tn=Photography%20Support%20Donation`
   }
 
   const copyToClipboard = async (text: string, type: string) => {

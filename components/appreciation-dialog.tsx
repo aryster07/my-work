@@ -17,7 +17,7 @@ export default function AppreciationDialog({ isOpen, onClose, photoTitle }: Appr
 
   const handleSocialFollow = (platform: string) => {
     const urls = {
-      instagram: 'https://www.instagram.com/7frames_aryan/',
+      instagram: 'https://www.instagram.com/7Frames_aryan/',
       pinterest: 'https://in.pinterest.com/drunken_monk/',
     }
     window.open(urls[platform as keyof typeof urls], '_blank')
@@ -66,16 +66,16 @@ export default function AppreciationDialog({ isOpen, onClose, photoTitle }: Appr
           </p>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 space-y-6">
           {/* Support Message */}
-          <div className="text-center mb-6">
-            <p className="text-gray-700 mb-4">
+          <div className="text-center">
+            <p className="text-gray-700">
               Broke but still want to help? I get it. Money's tight, but love is free! 💔
             </p>
           </div>
 
           {/* Social Media Buttons */}
-          <div className="space-y-3 mb-6">
+          <div className="space-y-3">
             <button
               onClick={() => handleSocialFollow('instagram')}
               className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all"
@@ -104,8 +104,8 @@ export default function AppreciationDialog({ isOpen, onClose, photoTitle }: Appr
           </div>
 
           {/* Optional Donation Section */}
-          <div className="border-t pt-6">
-            <p className="text-center text-gray-600 text-sm mb-4">
+          <div className="border-t pt-6 space-y-4">
+            <p className="text-center text-gray-600 text-sm">
               Support my work 💝
             </p>
             
@@ -118,14 +118,14 @@ export default function AppreciationDialog({ isOpen, onClose, photoTitle }: Appr
                 setCustomAmount(e.target.value)
                 setSelectedAmount(null)
               }}
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
             />
 
             {/* Donate Button */}
             <button
               onClick={handleDonate}
               disabled={!customAmount}
-              className="w-full py-3 px-4 bg-yellow-400 text-black rounded-lg font-semibold hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-3"
+              className="w-full py-3 px-4 bg-yellow-400 text-black rounded-lg font-semibold hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Donate Now
             </button>

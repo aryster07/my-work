@@ -233,7 +233,7 @@ export default function HomePage() {
             {/* Hero Text Content - Below Carousel */}
             <div className="text-center max-w-4xl mx-auto space-y-8">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight">
-                7frames_aryan
+                7Frames_aryan
               </h1>
               <p className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
                 I shoot everything, just not with a gun (Yet) 💀
