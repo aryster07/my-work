@@ -2,78 +2,25 @@ import Link from "next/link"
 import { Mail, Send, ArrowLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import { ContactForm } from "@/components/contact-form"
 import { DonationDialog } from "@/components/donation-dialog"
 import { SpeedLines } from "@/components/speed-lines"
 
 export default function ContactPage() {
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
-      <main className="flex-1 pt-24">
-        <section className="py-12 px-4 relative overflow-hidden">
+      <main className="flex-1 pt-20">
+        <section className="py-6 px-4 relative overflow-hidden">
           <SpeedLines />
 
           <div className="max-w-6xl mx-auto relative z-10">
-            {/* Back to Home Button */}
-            <Button variant="ghost" asChild className="mb-6 hover:bg-transparent hover:text-gold text-white">
-              <Link href="/" className="flex items-center">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                BACK TO HOME
-              </Link>
-            </Button>
-            
-            <div className="inline-block bg-[#FF0040] text-white px-4 py-1 rounded-sm text-sm font-bold mb-6">
-              CONTACT
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white">GET IN TOUCH</h1>
-            <p className="text-xl text-gray-400 max-w-2xl mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">GET IN TOUCH</h1>
+            <p className="text-lg text-gray-400 max-w-2xl mb-8">
               Ready to capture some amazing shots? Let's connect! You can message me on Instagram or send me an email directly.
             </p>
 
             <div className="grid md:grid-cols-2 gap-12 items-start">
-              <div className="bg-[#0A0A0A] p-8 border border-gray-800">
-                <h2 className="text-2xl font-bold mb-6 text-white">SEND A MESSAGE</h2>
-                <form className="space-y-6">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium text-gray-400">YOUR NAME</label>
-                    <Input
-                      id="name"
-                      placeholder="John Doe"
-                      className="bg-black border-gray-800 focus-visible:ring-[#00CCFF] rounded-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium text-gray-400">YOUR EMAIL</label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="john@example.com"
-                      className="bg-black border-gray-800 focus-visible:ring-[#00CCFF] rounded-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="subject" className="text-sm font-medium text-gray-400">SUBJECT</label>
-                    <Input
-                      id="subject"
-                      placeholder="Photoshoot Inquiry"
-                      className="bg-black border-gray-800 focus-visible:ring-[#00CCFF] rounded-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="message" className="text-sm font-medium text-gray-400">YOUR MESSAGE</label>
-                    <Textarea
-                      id="message"
-                      placeholder="Tell me about your project..."
-                      className="min-h-[150px] bg-black border-gray-800 focus-visible:ring-[#00CCFF] rounded-none"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full bg-[#FF0040] hover:bg-[#CC0033] rounded-none">
-                    <Send className="mr-2 h-4 w-4" />
-                    SEND MESSAGE
-                  </Button>
-                </form>
-              </div>
+              <ContactForm />
 
               <div className="space-y-8">
                 <div className="bg-[#0A0A0A] p-6 border border-gray-800 flex items-start">

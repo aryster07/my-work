@@ -1,27 +1,18 @@
 "use client"
 
 import Link from "next/link"
-import { Heart, Coffee, Camera, Car, Pizza, Zap, ArrowLeft } from "lucide-react"
+import { Heart, Coffee, Camera, Car, Pizza, Zap } from "lucide-react"
 import { DonationButton } from "@/components/donation-button"
-import { Button } from "@/components/ui/button"
 
 export default function SupportPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Hero Section with Beggar Meme */}
-      <section className="pt-20 pb-8 px-4 bg-gradient-to-b from-black to-gray-900">
+      <section className="pt-24 pb-6 px-4 bg-gradient-to-b from-black to-gray-900">
         <div className="max-w-4xl mx-auto">
-          {/* Back to Home Button */}
-          <Button variant="ghost" asChild className="mb-6 hover:bg-transparent hover:text-gold text-white">
-            <Link href="/" className="flex items-center">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              BACK TO HOME
-            </Link>
-          </Button>
-          
           <div className="text-center">
             {/* Beggar Meme Image */}
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-6 mt-4">
               <div className="relative">
                 <img 
                   src="/images/beggar-meme.png" 

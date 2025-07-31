@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 import AppreciationDialog from './appreciation-dialog'
@@ -34,7 +33,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
   const [showDonationDialog, setShowDonationDialog] = useState(false)
   const [showCreditDialog, setShowCreditDialog] = useState(false)
   const [selectedImage, setSelectedImage] = useState<CloudinaryImage | null>(null)
-  const imagesPerPage = 36 // Increased for better UX with large galleries
+  const imagesPerPage = 48 // Increased for full-screen view
 
   // Calculate pagination
   const totalPages = Math.ceil(images.length / imagesPerPage)
@@ -111,25 +110,16 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
   }
 
   return (
-    <>
-      {/* Gallery Header with Image Count */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="text-gray-400">
-          {images.length} {images.length === 1 ? 'image' : 'images'} 
-          {totalPages > 1 && (
-            <span className="ml-2">• Page {currentPage} of {totalPages}</span>
-          )}
-        </div>
-        <div className="text-sm text-gray-500">
-          {totalPages > 1 && (
-            <span>Page {currentPage} of {totalPages}</span>
-          )}
+    <div className="h-full w-full overflow-y-auto px-2 sm:px-4 py-4">
+      {/* Gallery Header with Image Count - Non-sticky */}
+      <div className="flex justify-between items-center mb-6 py-2">
+        <div className="text-gray-400 text-sm">
+          {images.length} {images.length === 1 ? 'image' : 'images'}
         </div>
       </div>
 
-      {/* Image Grid */}
-      {/* Masonry Layout with Instagram-style Aspect Ratios */}
-      <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 xl:columns-6 gap-3 sm:gap-4 space-y-3 sm:space-y-4">
+      {/* Image Grid - Optimized for full-screen viewing */}
+      <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-6 xl:columns-8 gap-2 sm:gap-3 space-y-2 sm:space-y-3 px-2 sm:px-4">
         {currentImages.map((image) => {
           // Instagram-style aspect ratio logic
           const getAspectRatioClass = () => {
@@ -158,6 +148,8 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
+                      console.log('Image clicked:', image.title)
+                      console.log('Setting selected image:', image)
                       // Open image in modal popup
                       setSelectedImage(image)
                     }}
@@ -184,11 +176,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                       />
                       
                       {/* Invisible protection overlay */}
-                      <div 
-                        className="absolute inset-0 z-10 pointer-events-none select-none"
-                        onContextMenu={(e) => e.preventDefault()}
-                        onDragStart={(e) => e.preventDefault()}
-                      />
+                      <div className="absolute inset-0 z-10 pointer-events-none select-none" />
                       
                       {/* Always visible glassy download icon on image - opens preview */}
                       <button
@@ -196,6 +184,8 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
+                          console.log('Download button clicked:', image.title)
+                          console.log('Setting selected image:', image)
                           // Open image in modal popup (same as clicking the image)
                           setSelectedImage(image)
                         }}
@@ -255,77 +245,75 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
       )}
 
       {/* Image Modal Popup */}
-      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-6xl w-[calc(100vw-2rem)] h-[calc(100vh-2rem)] md:w-[90vw] md:h-[90vh] p-0 bg-black/95 border-gray-800">
-          {selectedImage && (
-            <div className="relative w-full h-full flex flex-col">
-              {/* Image container */}
-              <div className="flex-1 flex items-center justify-center p-4 md:p-6">
-                <div className="relative">
-                  <Image
-                    src={`https://res.cloudinary.com/dmko2zav7/image/upload/q_80,f_auto,w_1200/${selectedImage.publicId}`}
-                    alt={selectedImage.title}
-                    width={selectedImage.width}
-                    height={selectedImage.height}
-                    className="max-w-full max-h-[65vh] md:max-h-[70vh] w-auto h-auto object-contain select-none"
-                    quality={85}
-                    priority
-                    draggable={false}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onDragStart={(e) => e.preventDefault()}
-                  />
-                  
-                  {/* Invisible protection overlay for modal image */}
-                  <div 
-                    className="absolute inset-0 pointer-events-none select-none"
-                    onContextMenu={(e) => e.preventDefault()}
-                  />
-                </div>
-              </div>
+      {selectedImage && (
+        <div className="fixed inset-0 z-50 w-screen h-screen bg-black/95 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+          {/* Close Button */}
+          <button
+            onClick={() => setSelectedImage(null)}
+            className="absolute top-4 right-4 z-30 w-10 h-10 bg-black/80 hover:bg-black/90 text-white rounded-full flex items-center justify-center transition-colors shadow-lg border border-white/20"
+            aria-label="Close modal"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
 
-              {/* Download button centered below image */}
-              <div className="flex justify-center pb-6">
-                <Button
-                  onClick={async () => {
-                    try {
-                      // Use our secure download API instead of direct Cloudinary URL
-                      const filename = `${selectedImage.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
-                      const downloadUrl = `/api/download?url=${encodeURIComponent(selectedImage.originalUrl)}&filename=${encodeURIComponent(filename)}`
-                      
-                      // Create and trigger download link
-                      const link = document.createElement('a')
-                      link.href = downloadUrl
-                      link.download = filename
-                      link.rel = 'noopener noreferrer'
-                      
-                      document.body.appendChild(link)
-                      link.click()
-                      document.body.removeChild(link)
-                      
-                      // Show random dialog after download (either appreciation or credit dialog)
-                      setTimeout(() => {
-                        const showCreditDialog = Math.random() < 0.5 // 50% chance for each
-                        if (showCreditDialog) {
-                          setShowCreditDialog(true)
-                        } else {
-                          setShowDonationDialog(true)
-                        }
-                      }, 1000)
-                    } catch (error) {
-                      console.error('Download failed:', error)
-                      alert('Download failed. Please try again.')
-                    }
-                  }}
-                  className="bg-gold hover:bg-gold/90 text-black font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg"
-                >
-                  <Download className="w-5 h-5 mr-2" />
-                  Download Image
-                </Button>
-              </div>
+          {/* Modal Content */}
+          <div className="flex flex-col items-center justify-center w-full h-full max-w-full max-h-full px-4 py-20 space-y-6">
+            <div className="relative flex-shrink-0 max-w-full max-h-full flex items-center justify-center">
+              <Image
+                src={`https://res.cloudinary.com/dmko2zav7/image/upload/q_80,f_auto,w_1200/${selectedImage.publicId}`}
+                alt={selectedImage.title}
+                width={selectedImage.width}
+                height={selectedImage.height}
+                className="max-w-[90vw] max-h-[50vh] w-auto h-auto object-contain select-none rounded-lg shadow-2xl"
+                quality={85}
+                priority
+                draggable={false}
+                onContextMenu={(e) => e.preventDefault()}
+                onDragStart={(e) => e.preventDefault()}
+              />
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
+
+            {/* Download Button - Always Visible */}
+            <div className="flex-shrink-0 w-full flex justify-center">
+              <Button
+                onClick={async () => {
+                  try {
+                    const filename = `${selectedImage.title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`
+                    const downloadUrl = `/api/download?url=${encodeURIComponent(selectedImage.originalUrl)}&filename=${encodeURIComponent(filename)}`
+                    
+                    const link = document.createElement('a')
+                    link.href = downloadUrl
+                    link.download = filename
+                    link.rel = 'noopener noreferrer'
+                    
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                    
+                    setTimeout(() => {
+                      const showCreditDialog = Math.random() < 0.5
+                      if (showCreditDialog) {
+                        setShowCreditDialog(true)
+                      } else {
+                        setShowDonationDialog(true)
+                      }
+                    }, 1000)
+                  } catch (error) {
+                    console.error('Download failed:', error)
+                    alert('Download failed. Please try again.')
+                  }
+                }}
+                className="bg-gold hover:bg-gold/90 text-black font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg text-sm flex-shrink-0"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download Image
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Appreciation Dialog */}
       <AppreciationDialog
@@ -340,6 +328,6 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
         onClose={() => setShowCreditDialog(false)}
         photoTitle={undefined}
       />
-    </>
+    </div>
   )
 }

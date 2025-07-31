@@ -108,6 +108,18 @@ export function DonationDialog({
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-md w-[calc(100vw-2rem)] mx-auto m-4 p-0 overflow-hidden max-h-[calc(100vh-2rem)]">
+          {/* Custom close button with better visibility */}
+          <button
+            onClick={() => setDialogOpen(false)}
+            className="absolute right-3 top-3 z-20 rounded-sm p-1 bg-gray-800 hover:bg-gray-700 text-white hover:text-gold transition-all duration-200 border border-gray-600"
+            aria-label="Close"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m18 6-12 12"/>
+              <path d="m6 6 12 12"/>
+            </svg>
+          </button>
+          
           <div className="relative p-6">
             {/* Header with sarcastic touch */}
             <DialogHeader className="text-center mb-6">

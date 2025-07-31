@@ -1,8 +1,5 @@
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
-import { DonationButton } from "@/components/donation-button"
 import { CloudinaryGallery } from "@/components/cloudinary-gallery"
 
 // Mapping of URL-friendly IDs to actual Cloudinary folder names
@@ -96,24 +93,12 @@ export default async function CategoryPage({ params }: { readonly params: Promis
   }
 
   return (
-    <div className="min-h-screen bg-black pt-20">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="flex justify-between items-center mb-8">
-          <Button variant="ghost" asChild className="group text-white hover:text-gold">
-            <Link href="/#gallery" className="flex items-center">
-              <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Back to Gallery
-            </Link>
-          </Button>
-          <DonationButton />
+    <div className="min-h-screen bg-black">
+      {/* Full Screen Gallery Container */}
+      <div className="pt-16 w-full h-screen overflow-hidden">
+        <div className="h-full w-full">
+          <CloudinaryGallery folderName={folderName} />
         </div>
-
-        <div className="mb-12">
-          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white mb-4 text-left leading-tight break-words">{categoryInfo.title}</h1>
-          <p className="text-base sm:text-lg text-gray-300 max-w-2xl text-left">{categoryInfo.description}</p>
-        </div>
-
-        <CloudinaryGallery folderName={folderName} />
       </div>
     </div>
   )
