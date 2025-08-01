@@ -10,9 +10,6 @@ interface AppreciationDialogProps {
 }
 
 export default function AppreciationDialog({ isOpen, onClose, photoTitle }: AppreciationDialogProps) {
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
-  const [customAmount, setCustomAmount] = useState('')
-
   if (!isOpen) return null
 
   const handleSocialFollow = (platform: string) => {
@@ -35,13 +32,6 @@ export default function AppreciationDialog({ isOpen, onClose, photoTitle }: Appr
       navigator.clipboard.writeText(window.location.href)
       alert('Link copied to clipboard!')
     }
-  }
-
-  const handleDonate = () => {
-    // Implement your payment logic here
-    const amount = selectedAmount || customAmount
-    alert(`Thank you for your ₹${amount} donation!`)
-    onClose()
   }
 
   return (
@@ -104,34 +94,6 @@ export default function AppreciationDialog({ isOpen, onClose, photoTitle }: Appr
             >
               <Share2 size={12} />
               Share
-            </button>
-          </div>
-
-          {/* Optional Donation Section */}
-          <div className="border-t pt-2 space-y-2">
-            <p className="text-center text-gray-600 text-xs">
-              Support my work 💝
-            </p>
-            
-            {/* Custom Amount */}
-            <input
-              type="number"
-              placeholder="₹ Amount"
-              value={customAmount}
-              onChange={(e) => {
-                setCustomAmount(e.target.value)
-                setSelectedAmount(null)
-              }}
-              className="w-full p-1.5 border border-gray-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-yellow-400"
-            />
-
-            {/* Donate Button */}
-            <button
-              onClick={handleDonate}
-              disabled={!customAmount}
-              className="w-full py-1.5 px-2 bg-yellow-400 text-black rounded text-xs font-semibold hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Donate Now
             </button>
           </div>
 

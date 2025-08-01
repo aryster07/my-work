@@ -1,5 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
+import { ArrowLeft } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { DonationDialog } from "@/components/donation-dialog"
 import { SpeedLines } from "@/components/speed-lines"
 
@@ -19,6 +21,12 @@ export default function WorkPage() {
         <section className="py-12 px-4 relative">
           <SpeedLines />
           <div className="max-w-6xl mx-auto relative z-10">
+            <Button variant="ghost" asChild className="mb-6 p-2 h-10 w-10 rounded-full bg-black/80 backdrop-blur-sm border border-gray-700 hover:border-gold/50 hover:bg-black/90 transition-all duration-200 group">
+              <Link href="/#gallery" aria-label="Back to Home">
+                <ArrowLeft className="h-5 w-5 text-white group-hover:text-gold transition-colors" />
+              </Link>
+            </Button>
+            
             <div className="inline-block bg-gold text-black px-4 py-1 rounded-sm text-sm font-bold mb-6">
               PORTFOLIO
             </div>

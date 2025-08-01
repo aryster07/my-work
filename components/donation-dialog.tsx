@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Heart, CreditCard, Copy, Check } from "lucide-react"
+import { Heart, Copy, Check } from "lucide-react"
 import QRCode from "react-qr-code"
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -59,37 +59,6 @@ export function DonationDialog({
     }
   }
 
-  const handleRazorpayPayment = () => {
-    const script = document.createElement('script')
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
-    script.async = true
-    script.onload = () => {
-      const options = {
-        key: 'YOUR_RAZORPAY_KEY_ID', // Replace with your actual key
-        amount: parseInt(customAmount) * 100, // Amount in paise
-        currency: 'INR',
-        name: '7Frames Photography',
-        description: 'Support My Photography Journey',
-        image: '/placeholder-logo.png',
-        handler: function (response: any) {
-          alert('Payment successful! Thank you for your support.')
-          setDialogOpen(false)
-        },
-        prefill: {
-          name: '',
-          email: '',
-          contact: ''
-        },
-        theme: {
-          color: '#FFD700'
-        }
-      }
-      const razorpay = new (window as any).Razorpay(options)
-      razorpay.open()
-    }
-    document.head.appendChild(script)
-  }
-
   return (
     <>
       {/* Floating donation button that appears after interaction */}
@@ -133,15 +102,12 @@ export function DonationDialog({
 
             {/* Payment Options */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-gray-800 mb-6 h-12">
+              <TabsList className="grid w-full grid-cols-2 bg-gray-800 mb-6 h-12">
                 <TabsTrigger value="upi" className="text-sm font-medium data-[state=active]:bg-gold data-[state=active]:text-black text-gray-300 hover:text-white h-10">
                   UPI
                 </TabsTrigger>
                 <TabsTrigger value="qr" className="text-sm font-medium data-[state=active]:bg-gold data-[state=active]:text-black text-gray-300 hover:text-white h-10">
                   QR Code
-                </TabsTrigger>
-                <TabsTrigger value="razorpay" className="text-sm font-medium data-[state=active]:bg-gold data-[state=active]:text-black text-gray-300 hover:text-white h-10">
-                  Card/Banking
                 </TabsTrigger>
               </TabsList>
 
@@ -152,7 +118,7 @@ export function DonationDialog({
                   {Object.entries(upiIds).map(([app, id]) => (
                     <div key={app} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
                       <div className="flex items-center space-x-3">
-                        <CreditCard className="w-5 h-5 text-gold" />
+                        <Heart className="w-5 h-5 text-gold" />
                         <span className="text-sm font-medium">{app}</span>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -188,35 +154,6 @@ export function DonationDialog({
                   </div>
                   <p className="text-sm text-gray-400 mt-3">
                     Amount: ₹{customAmount} • Scan with any UPI app
-                  </p>
-                </div>
-              </TabsContent>
-
-              {/* Razorpay Tab */}
-              <TabsContent value="razorpay" className="space-y-4 mt-4">
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="amount" className="text-sm font-medium text-gray-300">
-                      Enter amount (₹):
-                    </Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      value={customAmount}
-                      onChange={(e) => setCustomAmount(e.target.value)}
-                      className="bg-gray-800 border-gray-600 text-white mt-2"
-                      placeholder="Enter any amount"
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleRazorpayPayment}
-                    className="w-full bg-gold hover:bg-yellow-600 text-black font-semibold h-12"
-                  >
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    Pay ₹{customAmount} via Razorpay
-                  </Button>
-                  <p className="text-xs text-gray-400 text-center">
-                    Secure payment powered by Razorpay
                   </p>
                 </div>
               </TabsContent>

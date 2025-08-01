@@ -46,6 +46,7 @@
     "@radix-ui/react-tooltip": "1.1.5",
     "@types/nodemailer": "^6.4.17",
     "@types/sharp": "^0.31.1",
+    "@vercel/analytics": "^1.5.0",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",

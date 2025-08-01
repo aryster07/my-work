@@ -137,7 +137,7 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen overflow-x-hidden">
       <main className="flex-1 w-full max-w-full">
         {/* Hero Section */}
-        <section className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden pt-8 pb-10 bg-gradient-to-b from-slate-950/80 via-black/60 to-slate-900/70 backdrop-blur-sm">
+        <section id="home" className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden pt-8 pb-10 bg-gradient-to-b from-slate-950/80 via-black/60 to-slate-900/70 backdrop-blur-sm">
           <div className="absolute inset-0 z-0 w-full max-w-full">
             {/* Artistic Background Pattern */}
             <div className="absolute inset-0 opacity-10">
@@ -250,7 +250,7 @@ export default function HomePage() {
         </section>
 
         {/* About Me Section */}
-        <div className="py-16 md:py-20">
+        <div id="about" className="py-16 md:py-20">
           <AboutSection />
         </div>
 

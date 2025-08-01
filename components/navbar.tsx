@@ -11,6 +11,7 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [currentHash, setCurrentHash] = useState("")
+  const [activeSection, setActiveSection] = useState("home")
   const pathname = usePathname()
 
   useEffect(() => {
@@ -39,6 +40,44 @@ export function Navbar() {
     return () => window.removeEventListener("hashchange", handleHashChange)
   }, [])
 
+  // Scroll-based section detection
+  useEffect(() => {
+    if (pathname !== "/") return // Only apply on home page
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-50% 0px -50% 0px', // Trigger when section is in center of viewport
+      threshold: 0
+    }
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id
+          console.log('Section in view:', sectionId) // Debug log
+          setActiveSection(sectionId || "home")
+          
+          // Update URL hash without triggering scroll
+          const newHash = sectionId ? `#${sectionId}` : ""
+          if (window.location.hash !== newHash) {
+            window.history.replaceState(null, "", newHash || window.location.pathname)
+            setCurrentHash(newHash)
+          }
+        }
+      })
+    }
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions)
+
+    // Observe sections (these IDs should match your page sections)
+    const sections = document.querySelectorAll('#home, #gallery, #about')
+    sections.forEach((section) => observer.observe(section))
+
+    return () => {
+      sections.forEach((section) => observer.unobserve(section))
+    }
+  }, [pathname])
+
   // Prevent body scroll when menu is open to avoid visual glitches
   useEffect(() => {
     if (isMenuOpen) {
@@ -53,26 +92,26 @@ export function Navbar() {
     }
   }, [isMenuOpen])
 
-  // Check if a link is active
+  // Check if a link is active (scroll-based detection for home page)
   const isActive = (path: string) => {
     // For non-home pages (contact, support, etc.)
     if (path.startsWith("/") && path !== "/" && !path.includes("#")) {
       return pathname.startsWith(path)
     }
     
-    // For home page sections
+    // For home page sections - use scroll-based detection
     if (pathname === "/") {
       if (path === "/") {
-        // Home section - active when no hash or at top
-        return !currentHash || currentHash === "" || currentHash === "#"
+        // Home section - active when activeSection is "home" or empty
+        return activeSection === "home" || activeSection === ""
       }
       if (path === "/#gallery") {
-        // Gallery section - active when hash is #gallery
-        return currentHash === "#gallery"
+        // Gallery section - active when activeSection is "gallery"
+        return activeSection === "gallery"
       }
       if (path === "/#about") {
-        // About section - active when hash is #about
-        return currentHash === "#about"
+        // About section - active when activeSection is "about"
+        return activeSection === "about"
       }
     }
     

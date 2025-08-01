@@ -1,7 +1,8 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { Analytics } from "@vercel/analytics/next"
 
 import { ConditionalNavbar } from "@/components/conditional-navbar"
 import { Footer } from "@/components/footer"
@@ -14,7 +15,6 @@ export const metadata: Metadata = {
   description: "Photography portfolio showcasing the work of 7Frames_aryan",
   generator: 'v0.dev',
   manifest: '/manifest.json',
-  viewport: 'width=device-width, initial-scale=1',
   icons: {
     icon: [
       { url: '/images/Dp.jpg', sizes: '16x16', type: 'image/jpeg' },
@@ -42,6 +42,13 @@ export const metadata: Metadata = {
   }
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -56,6 +63,7 @@ export default function RootLayout({
           {children}
         </div>
         <Footer />
+        <Analytics />
       </body>
     </html>
   )
