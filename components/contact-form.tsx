@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { trackEvent } from "@/lib/analytics"
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -37,6 +38,9 @@ export function ContactForm() {
       if (response.ok) {
         setSubmitSuccess(true)
         setFormData({ name: "", email: "", message: "" })
+        
+        // Track successful form submission
+        trackEvent.contactFormSubmit('contact-form')
         
         // Reset success message after 5 seconds
         setTimeout(() => setSubmitSuccess(false), 5000)

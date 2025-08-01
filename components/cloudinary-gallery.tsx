@@ -8,6 +8,8 @@ import { Download, ArrowLeft } from 'lucide-react'
 import AppreciationDialog from './appreciation-dialog'
 import CreditDialog from './credit-dialog'
 import { ProgressiveImage } from './progressive-image'
+import { ProgressBar } from './progress-bar'
+import { trackEvent } from '@/lib/analytics'
 
 interface CloudinaryImage {
   id: number
@@ -64,6 +66,9 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
         }
         
         setImages(data.images || [])
+        
+        // Track category view
+        trackEvent.viewCategory(folderName)
       } catch (error) {
         console.error('❌ Error fetching images:', error)
       } finally {
@@ -105,6 +110,10 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
 
   const startDownloadWithAd = async (image: CloudinaryImage) => {
     try {
+      // Track download start
+      trackEvent.downloadImage(image.publicId, folderName)
+      trackEvent.adViewed('8743509731')
+      
       // Show ad modal immediately
       setShowAdModal(true)
       setDownloadProgress(0)
@@ -288,12 +297,16 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                       e.stopPropagation()
                       console.log('Image clicked:', image.title)
                       console.log('Setting selected image:', image)
+                      // Track image view
+                      trackEvent.viewImage(image.publicId, folderName)
                       // Open image in modal popup
                       setSelectedImage(image)
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault()
+                        // Track image view
+                        trackEvent.viewImage(image.publicId, folderName)
                         setSelectedImage(image)
                       }
                     }}
@@ -473,7 +486,7 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
           <Script
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6821462473342756"
             crossOrigin="anonymous"
-            strategy="lazyOnload"
+            strategy="beforeInteractive"
           />
           <div className="bg-gray-900 rounded-lg shadow-2xl border border-gray-700 max-w-lg w-full mx-4 overflow-hidden">
             {/* Ad Header */}
@@ -503,17 +516,11 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                     <p className="text-gold font-semibold">
                       {isDownloadReady ? 'Download Ready!' : 'Preparing download...'}
                     </p>
-                    <div className="w-64 bg-gray-700 rounded-full h-3 overflow-hidden">
-                      <div 
-                        className={`h-full rounded-full transition-all duration-500 ease-out ${
-                          isDownloadReady ? 'bg-gold' : 'bg-gold/70'
-                        }`}
-                        style={{ 
-                          width: `${Math.min(100, Math.max(0, downloadProgress))}%`,
-                          transform: 'translateZ(0)' // Force hardware acceleration
-                        }}
-                      ></div>
-                    </div>
+                    <ProgressBar 
+                      progress={downloadProgress}
+                      isReady={isDownloadReady}
+                      className="w-64"
+                    />
                     <p className="text-sm text-gray-400">
                       {Math.round(Math.min(100, Math.max(0, downloadProgress)))}% complete
                     </p>
@@ -530,18 +537,16 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                       <p className="text-sm text-gray-400">Supporting our photography work</p>
                     </div>
                     
-                    {/* AdSense Ad Unit */}
-                    <ins 
-                      className="adsbygoogle"
-                      style={{ display: 'block' }}
-                      data-ad-client="ca-pub-6821462473342756"
-                      data-ad-slot="8743509731"
-                      data-ad-format="auto"
-                      data-full-width-responsive="true"
-                    ></ins>
-                    <Script id="adsbygoogle-init" strategy="afterInteractive">
-                      {`(adsbygoogle = window.adsbygoogle || []).push({});`}
-                    </Script>
+                    {/* AdSense Ad Unit with proper implementation */}
+                    <div className="w-full min-h-[200px] flex items-center justify-center">
+                      <ins 
+                        className="adsbygoogle block w-full h-[200px]"
+                        data-ad-client="ca-pub-6821462473342756"
+                        data-ad-slot="8743509731"
+                        data-ad-format="auto"
+                        data-full-width-responsive="true"
+                      ></ins>
+                    </div>
                   </div>
                   
                   {/* Download Progress */}
@@ -549,21 +554,26 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                     <p className="text-gold font-semibold">
                       {isDownloadReady ? 'Download Ready!' : 'Preparing download...'}
                     </p>
-                    <div className="w-64 bg-gray-700 rounded-full h-3 overflow-hidden">
-                      <div 
-                        className={`h-full rounded-full transition-all duration-500 ease-out ${
-                          isDownloadReady ? 'bg-gold' : 'bg-gold/70'
-                        }`}
-                        style={{ 
-                          width: `${Math.min(100, Math.max(0, downloadProgress))}%`,
-                          transform: 'translateZ(0)' // Force hardware acceleration
-                        }}
-                      ></div>
-                    </div>
+                    <ProgressBar 
+                      progress={downloadProgress}
+                      isReady={isDownloadReady}
+                      className="w-64"
+                    />
                     <p className="text-sm text-gray-400">
                       {Math.round(Math.min(100, Math.max(0, downloadProgress)))}% complete
                     </p>
                   </div>
+
+                  {/* AdSense Initialization Script */}
+                  <Script id="adsbygoogle-init" strategy="afterInteractive">
+                    {`
+                      (function() {
+                        if (typeof window !== 'undefined') {
+                          (adsbygoogle = window.adsbygoogle || []).push({});
+                        }
+                      })();
+                    `}
+                  </Script>
                 </>
               )}
             </div>

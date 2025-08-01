@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Heart, Copy, Check } from "lucide-react"
 import QRCode from "react-qr-code"
+import { trackEvent } from "@/lib/analytics"
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -65,8 +66,16 @@ export function DonationDialog({
       <button 
         data-donation-trigger
         className="fixed bottom-6 right-6 z-50 group cursor-pointer bg-gold hover:bg-yellow-600 text-black p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 group-hover:shadow-xl"
-        onClick={() => setDialogOpen(true)}
-        onKeyDown={(e) => e.key === 'Enter' && setDialogOpen(true)}
+        onClick={() => {
+          trackEvent.donationDialogOpened()
+          setDialogOpen(true)
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            trackEvent.donationDialogOpened()
+            setDialogOpen(true)
+          }
+        }}
         aria-label="Support My Work"
       >
         <Heart className="w-6 h-6 fill-current" />

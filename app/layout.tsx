@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
+import Script from "next/script"
 import "./globals.css"
 import { Analytics } from "@vercel/analytics/next"
 
@@ -56,6 +57,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="overflow-x-hidden">
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6821462473342756"
+          crossOrigin="anonymous"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body className={`${inter.className} bg-gradient-to-br from-slate-950 via-black to-slate-900 text-white min-h-screen overflow-x-hidden max-w-full`}>
         <ImageProtection />
         <ConditionalNavbar />

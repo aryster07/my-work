@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { persistentStorage } from '@/lib/persistent-storage'
+import { trackServerEvent } from '@/lib/analytics'
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,6 +18,9 @@ export async function POST(request: NextRequest) {
     
     // Increment download count
     const newCount = persistentStorage.incrementCount(imageKey)
+    
+    // Track server-side download event
+    await trackServerEvent.imageDownloaded(publicId, folderName)
     
     console.log(`📊 Download count updated for ${publicId}: ${newCount}`)
     

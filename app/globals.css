@@ -521,3 +521,30 @@ input:focus-visible {
 .download-progress-bar[data-progress="50"] { width: 50%; }
 .download-progress-bar[data-progress="75"] { width: 75%; }
 .download-progress-bar[data-progress="100"] { width: 100%; }
+
+/* Dynamic progress bar with data attributes */
+.progress-bar-dynamic[data-width="0"] { width: 0%; }
+.progress-bar-dynamic[data-width="1"] { width: 1%; }
+.progress-bar-dynamic[data-width="2"] { width: 2%; }
+.progress-bar-dynamic[data-width="3"] { width: 3%; }
+.progress-bar-dynamic[data-width="4"] { width: 4%; }
+.progress-bar-dynamic[data-width="5"] { width: 5%; }
+.progress-bar-dynamic[data-width="10"] { width: 10%; }
+.progress-bar-dynamic[data-width="15"] { width: 15%; }
+.progress-bar-dynamic[data-width="20"] { width: 20%; }
+.progress-bar-dynamic[data-width="25"] { width: 25%; }
+.progress-bar-dynamic[data-width="30"] { width: 30%; }
+.progress-bar-dynamic[data-width="35"] { width: 35%; }
+.progress-bar-dynamic[data-width="40"] { width: 40%; }
+.progress-bar-dynamic[data-width="45"] { width: 45%; }
+.progress-bar-dynamic[data-width="50"] { width: 50%; }
+.progress-bar-dynamic[data-width="55"] { width: 55%; }
+.progress-bar-dynamic[data-width="60"] { width: 60%; }
+.progress-bar-dynamic[data-width="65"] { width: 65%; }
+.progress-bar-dynamic[data-width="70"] { width: 70%; }
+.progress-bar-dynamic[data-width="75"] { width: 75%; }
+.progress-bar-dynamic[data-width="80"] { width: 80%; }
+.progress-bar-dynamic[data-width="85"] { width: 85%; }
+.progress-bar-dynamic[data-width="90"] { width: 90%; }
+.progress-bar-dynamic[data-width="95"] { width: 95%; }
+.progress-bar-dynamic[data-width="100"] { width: 100%; }

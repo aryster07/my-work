@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CloudinaryGallery } from "@/components/cloudinary-gallery"
+import { PageTracker } from "@/components/page-tracker"
 
 // Mapping of URL-friendly IDs to actual Cloudinary folder names
 const folderMapping: { [key: string]: string } = {
@@ -95,6 +96,8 @@ export default async function CategoryPage({ params }: { readonly params: Promis
 
   return (
     <div className="min-h-screen bg-black">
+      <PageTracker pageName="category" categoryName={folderName} />
+      
       {/* Clean Back Button - Fixed Position - Hidden on Mobile */}
       <div className="hidden sm:block fixed top-24 left-4 z-40">
         <Button 
