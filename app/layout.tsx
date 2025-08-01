@@ -36,6 +36,7 @@ export const metadata: Metadata = {
     shortcut: '/images/Dp.jpg',
   },
   other: {
+    'google-adsense-account': 'ca-pub-6821462473342756',
     'mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black-translucent',

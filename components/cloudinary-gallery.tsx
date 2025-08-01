@@ -568,8 +568,12 @@ export function CloudinaryGallery({ folderName }: Readonly<CloudinaryGalleryProp
                   <Script id="adsbygoogle-init" strategy="afterInteractive">
                     {`
                       (function() {
-                        if (typeof window !== 'undefined') {
-                          (adsbygoogle = window.adsbygoogle || []).push({});
+                        if (typeof window !== 'undefined' && window.adsbygoogle) {
+                          try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                          } catch (e) {
+                            console.log('AdSense initialization skipped');
+                          }
                         }
                       })();
                     `}
